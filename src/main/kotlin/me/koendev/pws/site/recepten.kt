@@ -3,6 +3,7 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import kotlinx.serialization.json.Json
@@ -12,6 +13,7 @@ import readInput
 fun Routing.recepten() {
     val dataLocation = "static/new_recipe_data.json"
     val recipes = Json.decodeFromString<List<Recipe>>(readInput(dataLocation).joinToString(""))
+    get("/recepten/") {call.respondRedirect("/recepten")}
     get("/recepten") {
         call.respondHtml(HttpStatusCode.OK) {
             head {

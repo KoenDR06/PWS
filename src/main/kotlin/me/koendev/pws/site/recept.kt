@@ -3,6 +3,7 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import kotlinx.serialization.json.Json
@@ -12,7 +13,10 @@ import readInput
 fun Routing.recept() {
     val dataLocation = "static/new_recipe_data.json"
     val recipes = Json.decodeFromString<List<Recipe>>(readInput(dataLocation).joinToString(""))
-
+    get("/recepten/{recipe_id}/") {
+        val recipeId = call.parameters["recipe_id"] ?: throw IllegalArgumentException("Invalid ID")
+        call.respondRedirect("/recepten/${recipeId}")
+    }
     get("/recepten/{recipe_id}") {
         val recipeId = call.parameters["recipe_id"]
         val recipe = recipes.find { it.id == recipeId }
