@@ -5,14 +5,14 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
-import kotlinx.serialization.json.Json
-import me.koendev.pws.datatypes.Recipe
-import readInput
+import me.koendev.pws.database.RecipeService
+import me.koendev.pws.plugins.database
 
 fun Routing.recepten() {
-    val dataLocation = "static/new_recipe_data.json"
-    val recipes = Json.decodeFromString<List<Recipe>>(readInput(dataLocation).joinToString(""))
+
+
     get("/recepten/") {call.respondRedirect("/recepten")}
     get("/recepten") {
         call.respondHtml(HttpStatusCode.OK) {
@@ -26,40 +26,49 @@ fun Routing.recepten() {
                     +"Recepten"
                 }
                 div {
-                    for (i in 0..50) {
-                        div {
-                            style = "display: flex;"
-                            // TODO Make clicking on recipe redirect to recipe page
-                            id = recipes[i].id
-                            div {
-                                img {
-                                    src = recipes[i].image_url
-                                    height = "100px"
+                    for (i in 1..50) {
+                        runBlocking {
+//                            val user = transaction {
+//                                val users = RecipeService.find {
+//                                    username eq body.username
+//                                }
+//
+//                                users.firstOrNull()
+//                            }
+                            val recipe = RecipeService(database = database).read(i)
+                            /*div {
+                                style = "display: flex;"
+                                id = recipe.id
+                                div {
+                                    img {
+                                        src = recipe.image_url
+                                        height = "100px"
+                                    }
+                                }
+                                div {
+                                    h3 {
+                                        +recipe.title
+                                    }
+                                    p {
+                                        +recipe.description
+                                    }
                                 }
                             }
                             div {
-                                h3 {
-                                    +recipes[i].title
-                                }
+                                style = "display: flex; "
                                 p {
-                                    +recipes[i].description
+                                    +"${recipe.total_time} minuten om klaar te maken."
+                                }
+                                a {
+                                    style = "margin-top: 16px;" +
+                                            "margin-bottom: 16px;" +
+                                            "margin-left: 20px;"
+                                    href = "/recepten/${recipe.id}"
+                                    +"Klik hier om meer te lezen"
                                 }
                             }
+                            hr {} */
                         }
-                        div {
-                            style = "display: flex; "
-                            p {
-                                +"${recipes[i].total_time} minuten om klaar te maken."
-                            }
-                            a {
-                                style = "margin-top: 16px;" +
-                                        "margin-bottom: 16px;" +
-                                        "margin-left: 20px;"
-                                href = "/recepten/${recipes[i].id}"
-                                +"Klik hier om meer te lezen"
-                            }
-                        }
-                        hr {}
                     }
                 }
             }

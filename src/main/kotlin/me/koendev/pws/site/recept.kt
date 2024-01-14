@@ -6,20 +6,17 @@ import io.ktor.server.html.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import kotlinx.serialization.json.Json
-import me.koendev.pws.datatypes.Recipe
-import readInput
+import me.koendev.pws.database.RecipeService
+import me.koendev.pws.plugins.database
 
 fun Routing.recept() {
-    val dataLocation = "static/new_recipe_data.json"
-    val recipes = Json.decodeFromString<List<Recipe>>(readInput(dataLocation).joinToString(""))
     get("/recepten/{recipe_id}/") {
         val recipeId = call.parameters["recipe_id"] ?: throw IllegalArgumentException("Invalid ID")
         call.respondRedirect("/recepten/${recipeId}")
     }
     get("/recepten/{recipe_id}") {
         val recipeId = call.parameters["recipe_id"]
-        val recipe = recipes.find { it.id == recipeId }
+        val recipe = RecipeService(database = database).read(1)
         if (recipe == null) {
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {
@@ -57,23 +54,23 @@ fun Routing.recept() {
                             +"Ingrediënten"
                         }
 
-                        for(ingredient in recipe.ingredients) {
-                            input(type = InputType.checkBox, name = "myCheckbox") {}
-                            +"${ingredient["quantity"]!!} ${ingredient["ingredient"]!!}"
-                            br {}
-                        }
+//                        for(ingredient in recipe.ingredients) {
+//                            input(type = InputType.checkBox, name = "myCheckbox") {}
+//                            +"${ingredient["quantity"]!!} ${ingredient["ingredient"]!!}"
+//                            br {}
+//                        }
                     }
                     div {
                         id = "steps"
                         h3 {
                             +"Bereiding:"
                         }
-                        for(step in recipe.steps) {
-                            p {
-                                style = "max-width: 25%;"
-                                +step
-                            }
-                        }
+//                        for(step in recipe.steps) {
+//                            p {
+//                                style = "max-width: 25%;"
+//                                +step
+//                            }
+//                        }
                     }
 
                 }
