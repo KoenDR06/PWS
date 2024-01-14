@@ -1,19 +1,18 @@
-package me.koendev.pws.plugins
+package me.koendev.pws.database
 
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import kotlinx.serialization.Serializable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
-data class ExposedUser(val name: String, val age: Int)
+data class User(val name: String)
 class UserService(private val database: Database) {
     object Users : Table() {
         val id = integer("id").autoIncrement()
         val name = varchar("name", length = 50)
-        val age = integer("age")
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -27,26 +26,28 @@ class UserService(private val database: Database) {
     suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
-    suspend fun create(user: ExposedUser): Int = dbQuery {
+    companion object {
+        lateinit var INSTANCE: UserService
+    }
+
+    suspend fun create(user: User): Int = dbQuery {
         Users.insert {
             it[name] = user.name
-            it[age] = user.age
         }[Users.id]
     }
 
-    suspend fun read(id: Int): ExposedUser? {
+    suspend fun read(id: Int): User? {
         return dbQuery {
             Users.select { Users.id eq id }
-                .map { ExposedUser(it[Users.name], it[Users.age]) }
+                .map { User(it[Users.name]) }
                 .singleOrNull()
         }
     }
 
-    suspend fun update(id: Int, user: ExposedUser) {
+    suspend fun update(id: Int, user: User) {
         dbQuery {
             Users.update({ Users.id eq id }) {
                 it[name] = user.name
-                it[age] = user.age
             }
         }
     }

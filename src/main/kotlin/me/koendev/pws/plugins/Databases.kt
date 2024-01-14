@@ -1,50 +1,24 @@
 package me.koendev.pws.plugins
 
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import me.koendev.pws.database.Recipe
+import me.koendev.pws.database.UserService
 import me.koendev.pws.dotEnv
 import org.jetbrains.exposed.sql.Database
 
+lateinit var database: Database
+
 fun Application.configureDatabases() {
-    val database = Database.connect(
+    database = Database.connect(
         url = dotEnv["DB_URL"],
         user = dotEnv["DB_USER"],
         driver = "org.mariadb.jdbc.Driver",
         password = dotEnv["DB_PASSWORD"]
     )
+
     val userService = UserService(database)
-    routing {
-        // Create user
-        post("/users") {
-            val user = call.receive<ExposedUser>()
-            val id = userService.create(user)
-            call.respond(HttpStatusCode.Created, id)
-        }
-        // Read user
-        get("/users/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = userService.read(id)
-            if (user != null) {
-                call.respond(HttpStatusCode.OK, user)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-        // Update user
-        put("/users/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = call.receive<ExposedUser>()
-            userService.update(id, user)
-            call.respond(HttpStatusCode.OK)
-        }
-        // Delete user
-        delete("/users/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            userService.delete(id)
-            call.respond(HttpStatusCode.OK)
-        }
-    }
+    val recipe = Recipe(database)
+
+    UserService.INSTANCE = userService
+    Recipe.INSTANCE = recipe
 }
