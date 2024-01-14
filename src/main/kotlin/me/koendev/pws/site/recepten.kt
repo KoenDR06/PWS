@@ -26,7 +26,6 @@ fun Routing.recepten() {
                 div {
                     for (i in 0..50) {
                         div {
-                            onClick = "window.location.href = '/recepten/${recipes[i].id}'"
                             style = "display: flex;"
                             // TODO Make clicking on recipe redirect to recipe page
                             id = recipes[i].id
@@ -46,8 +45,16 @@ fun Routing.recepten() {
                             }
                         }
                         div {
+                            style = "display: flex; "
                             p {
                                 +"${recipes[i].total_time} minuten om klaar te maken."
+                            }
+                            a {
+                                style = "margin-top: 16px;" +
+                                        "margin-bottom: 16px;" +
+                                        "margin-left: 20px;"
+                                href = "/recepten/${recipes[i].id}"
+                                +"Klik hier om meer te lezen"
                             }
                         }
                         hr {}

@@ -19,5 +19,8 @@ fun Application.configureRouting() {
     }
     routing {
         webRouting()
+        get("/") {
+            call.respondText("works")
+        }
     }
 }
