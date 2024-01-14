@@ -3,13 +3,11 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.server.plugins.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.json.Json
-import me.koendev.pws.data.Recipe
-import readInput
 import kotlinx.html.*
+import kotlinx.serialization.json.Json
+import me.koendev.pws.datatypes.Recipe
+import readInput
 
 fun Routing.recepten() {
     val dataLocation = "static/new_recipe_data.json"
@@ -26,35 +24,35 @@ fun Routing.recepten() {
                     +"Recepten"
                 }
                 div {
-
-
                     for (i in 0..50) {
                         div {
+                            onClick = "window.location.href = '/recepten/${recipes[i].id}'"
+                            style = "display: flex;"
                             // TODO Make clicking on recipe redirect to recipe page
                             id = recipes[i].id
-                            h3 {
-                                +recipes[i].title
+                            div {
+                                img {
+                                    src = recipes[i].image_url
+                                    height = "100px"
+                                }
                             }
-                            p {
-                                +recipes[i].description
+                            div {
+                                h3 {
+                                    +recipes[i].title
+                                }
+                                p {
+                                    +recipes[i].description
+                                }
                             }
                         }
+                        div {
+                            p {
+                                +"${recipes[i].total_time} minuten om klaar te maken."
+                            }
+                        }
+                        hr {}
                     }
-
-
                 }
-            }
-        }
-    }
-
-    route("/{recipe_id}") {
-        get {
-            val recipeId = call.parameters["recipe_id"]
-            val recipe = recipes.find { it.id == recipeId }
-            if (recipe != null) {
-                call.respond(recipe)
-            } else {
-                throw NotFoundException("Recipe not found")
             }
         }
     }
