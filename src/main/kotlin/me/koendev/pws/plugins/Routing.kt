@@ -7,7 +7,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import me.koendev.pws.api.dbRouting
+import me.koendev.pws.api.apiRouting
 import me.koendev.pws.site.webRouting
 
 fun Application.configureRouting() {
@@ -20,6 +20,6 @@ fun Application.configureRouting() {
     }
     routing {
         webRouting()
-        dbRouting()
+        apiRouting()
     }
 }

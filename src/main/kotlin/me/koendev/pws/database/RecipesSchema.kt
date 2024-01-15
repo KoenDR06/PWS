@@ -8,11 +8,17 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
-data class Recipe(val id:Int, val title: String, val description: String, val image_url: String, val prepare_time: Int,
-                  val oven_time: Int, val wait_time: Int, val rating: Double, val rating_count: Int)
+data class Recipe(val title: String, val description: String, val image_url: String, val prepare_time: Int,
+                  val oven_time: Int, val wait_time: Int, val rating: Double, val rating_count: Int,
+                  var total_time: Int = 0) {
+    init {
+        total_time = prepare_time + oven_time + wait_time
+    }
+}
+
 class RecipeService(private val database: Database) {
     object Recipes : Table() {
-        val id = integer("id")
+        val id = integer("id").autoIncrement()
         val title = varchar("title", length = 128)
         val description = varchar("description", length = 1024)
         val image_url = varchar("image_url", length = 128)
@@ -41,7 +47,6 @@ class RecipeService(private val database: Database) {
 
     suspend fun create(recipe: Recipe): Int = dbQuery {
         Recipes.insert {
-            it[id] = recipe.id
             it[title] = recipe.title
             it[description] = recipe.description
             it[image_url] = recipe.image_url
@@ -56,7 +61,7 @@ class RecipeService(private val database: Database) {
     suspend fun read(id: Int): Recipe? {
         return dbQuery {
             Recipes.select { Recipes.id eq id }
-                .map { Recipe(it[Recipes.id], it[Recipes.title], it[Recipes.description], it[Recipes.image_url],
+                .map { Recipe(it[Recipes.title], it[Recipes.description], it[Recipes.image_url],
                     it[Recipes.prepare_time], it[Recipes.oven_time], it[Recipes.wait_time],
                     it[Recipes.rating], it[Recipes.rating_count]) }
                 .singleOrNull()
@@ -80,7 +85,7 @@ class RecipeService(private val database: Database) {
 
     suspend fun delete(id: Int) {
         dbQuery {
-            UserService.Users.deleteWhere { Recipes.id.eq(id) }
+            Recipes.deleteWhere { Recipes.id.eq(id) }
         }
     }
 }

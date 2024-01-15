@@ -7,7 +7,6 @@ import io.ktor.server.netty.*
 import me.koendev.pws.plugins.*
 
 val dotEnv = dotenv()
-val runUrl = "http://localhost:8080"
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)

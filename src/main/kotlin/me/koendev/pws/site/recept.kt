@@ -6,8 +6,7 @@ import io.ktor.server.html.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.database.RecipeService
-import me.koendev.pws.plugins.database
+import me.koendev.pws.plugins.recipeService
 
 fun Routing.recept() {
     get("/recepten/{recipe_id}/") {
@@ -15,8 +14,8 @@ fun Routing.recept() {
         call.respondRedirect("/recepten/${recipeId}")
     }
     get("/recepten/{recipe_id}") {
-        val recipeId = call.parameters["recipe_id"]
-        val recipe = RecipeService(database = database).read(1)
+        val recipeId = call.parameters["recipe_id"] ?: throw IllegalArgumentException("Invalid ID")
+        val recipe = recipeService.read(recipeId.toInt())
         if (recipe == null) {
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {

@@ -3,12 +3,12 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.plugins.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
-import me.koendev.pws.database.RecipeService
-import me.koendev.pws.plugins.database
+import me.koendev.pws.plugins.recipeService
 
 fun Routing.recepten() {
 
@@ -28,17 +28,10 @@ fun Routing.recepten() {
                 div {
                     for (i in 1..50) {
                         runBlocking {
-//                            val user = transaction {
-//                                val users = RecipeService.find {
-//                                    username eq body.username
-//                                }
-//
-//                                users.firstOrNull()
-//                            }
-                            val recipe = RecipeService(database = database).read(i)
-                            /*div {
+                            val recipe = recipeService.read(i) ?: throw NotFoundException("Recipe was not found in database.")
+                            div {
                                 style = "display: flex;"
-                                id = recipe.id
+                                id = i.toString()
                                 div {
                                     img {
                                         src = recipe.image_url
@@ -63,11 +56,11 @@ fun Routing.recepten() {
                                     style = "margin-top: 16px;" +
                                             "margin-bottom: 16px;" +
                                             "margin-left: 20px;"
-                                    href = "/recepten/${recipe.id}"
+                                    href = "/recepten/${i}"
                                     +"Klik hier om meer te lezen"
                                 }
                             }
-                            hr {} */
+                            hr {}
                         }
                     }
                 }

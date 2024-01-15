@@ -35,4 +35,7 @@ out/
 ### VS Code ###
 .vscode/
 
+### OWN STUFF ###
 .env
+/src/main/resources/static/new_recipe_data.json
+/src/main/resources/static/tag_data.json

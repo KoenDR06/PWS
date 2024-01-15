@@ -28,7 +28,6 @@ fun main() {
             if(recipe.id.substring(3).toInt() !in recipesAdded) {
                 recipesAdded.add(recipe.id.substring(3).toInt())
                 val row = me.koendev.pws.database.Recipe(
-                    recipe.id.substring(3).toInt(),
                     recipe.title,
                     recipe.description,
                     recipe.image_url,
