@@ -11,8 +11,6 @@ import kotlinx.html.*
 import me.koendev.pws.plugins.recipeService
 
 fun Routing.recepten() {
-
-
     get("/recepten/") {call.respondRedirect("/recepten")}
     get("/recepten") {
         call.respondHtml(HttpStatusCode.OK) {

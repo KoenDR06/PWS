@@ -6,4 +6,5 @@ fun Routing.webRouting() {
     recepten()
     recept()
     login()
+    search()
 }

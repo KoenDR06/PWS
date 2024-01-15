@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Serializable
 
 data class RecipeTag(val recipeId: Int, val tagId: Int)
-class RecipeTagsService(private val database: Database) {
+class RecipeTagsService(database: Database) {
     object RecipeTags : Table() {
         val recipeId = integer("recipe_id").autoIncrement()
         val tagId = integer("tag_id")

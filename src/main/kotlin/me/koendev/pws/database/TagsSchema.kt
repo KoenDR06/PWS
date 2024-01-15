@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
 data class Tag(val name: String)
-class TagsService(private val database: Database) {
+class TagsService(database: Database) {
     object Tags : Table() {
         val id = integer("id").autoIncrement()
         val name = varchar("name", length = 32)

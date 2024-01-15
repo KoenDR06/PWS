@@ -54,8 +54,9 @@ fun Routing.recept() {
                         }
 
 //                        for(ingredient in recipe.ingredients) {
-//                            input(type = InputType.checkBox, name = "myCheckbox") {}
+//                            input(type = InputType.checkBox) {}
 //                            +"${ingredient["quantity"]!!} ${ingredient["ingredient"]!!}"
+//                        TODO CHANGE THE PLAIN TEXT TO LABEL WITH HTMLFOR
 //                            br {}
 //                        }
                     }

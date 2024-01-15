@@ -16,17 +16,17 @@ data class Recipe(val title: String, val description: String, val image_url: Str
     }
 }
 
-class RecipeService(private val database: Database) {
+class RecipeService(database: Database) {
     object Recipes : Table() {
         val id = integer("id").autoIncrement()
         val title = varchar("title", length = 128)
         val description = varchar("description", length = 1024)
-        val image_url = varchar("image_url", length = 128)
-        val prepare_time = integer("prepare_time")
-        val oven_time = integer("oven_time")
-        val wait_time = integer("wait_time")
+        val imageUrl = varchar("image_url", length = 128)
+        val prepareTime = integer("prepare_time")
+        val ovenTime = integer("oven_time")
+        val waitTime = integer("wait_time")
         val rating = double("rating")
-        val rating_count = integer("rating_count")
+        val ratingCount = integer("rating_count")
 
 
         override val primaryKey = PrimaryKey(id)
@@ -49,21 +49,21 @@ class RecipeService(private val database: Database) {
         Recipes.insert {
             it[title] = recipe.title
             it[description] = recipe.description
-            it[image_url] = recipe.image_url
-            it[prepare_time] = recipe.prepare_time
-            it[oven_time] = recipe.oven_time
-            it[wait_time] = recipe.wait_time
+            it[imageUrl] = recipe.image_url
+            it[prepareTime] = recipe.prepare_time
+            it[ovenTime] = recipe.oven_time
+            it[waitTime] = recipe.wait_time
             it[rating] = recipe.rating
-            it[rating_count] = recipe.rating_count
+            it[ratingCount] = recipe.rating_count
         }[Recipes.id]
     }
 
     suspend fun read(id: Int): Recipe? {
         return dbQuery {
             Recipes.select { Recipes.id eq id }
-                .map { Recipe(it[Recipes.title], it[Recipes.description], it[Recipes.image_url],
-                    it[Recipes.prepare_time], it[Recipes.oven_time], it[Recipes.wait_time],
-                    it[Recipes.rating], it[Recipes.rating_count]) }
+                .map { Recipe(it[Recipes.title], it[Recipes.description], it[Recipes.imageUrl],
+                    it[Recipes.prepareTime], it[Recipes.ovenTime], it[Recipes.waitTime],
+                    it[Recipes.rating], it[Recipes.ratingCount]) }
                 .singleOrNull()
         }
     }
@@ -73,12 +73,12 @@ class RecipeService(private val database: Database) {
             Recipes.update({ Recipes.id eq id }) {
                 it[title] = recipe.title
                 it[description] = recipe.description
-                it[image_url] = recipe.image_url
-                it[prepare_time] = recipe.prepare_time
-                it[oven_time] = recipe.oven_time
-                it[wait_time] = recipe.wait_time
+                it[imageUrl] = recipe.image_url
+                it[prepareTime] = recipe.prepare_time
+                it[ovenTime] = recipe.oven_time
+                it[waitTime] = recipe.wait_time
                 it[rating] = recipe.rating
-                it[rating_count] = recipe.rating_count
+                it[ratingCount] = recipe.rating_count
             }
         }
     }
