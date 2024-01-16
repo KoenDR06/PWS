@@ -2,10 +2,18 @@ package me.koendev.pws.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+
+const val SEPARATOR = ";"
 
 @Serializable
 data class User(val username: String, val currentMonday: Int? = null, val currentTuesday: Int? = null, val currentWednesday: Int? = null,
@@ -13,28 +21,17 @@ data class User(val username: String, val currentMonday: Int? = null, val curren
                 val nextMonday: Int? = null, val nextTuesday: Int? = null, val nextWednesday: Int? = null, val nextThursday: Int? = null,
                 val nextFriday: Int? = null, val nextSaturday: Int? = null, val nextSunday: Int? = null)
 class UserService(database: Database) {
-    object Users : Table() {
-        val id = integer("id").autoIncrement()
-        val username = varchar("username", length = 50)
+    object UsersService : IntIdTable() {
+        val username = varchar("username", length = 64)
 
         // Mealplan columns
-        val currentMonday = integer("current_monday")
-        val currentTuesday = integer("current_tuesday")
-        val currentWednesday = integer("current_wednesday")
-        val currentThursday = integer("current_thursday")
-        val currentFriday = integer("current_friday")
-        val currentSaturday = integer("current_saturday")
-        val currentSunday = integer("current_sunday")
-        val nextMonday = integer("next_monday")
-        val nextTuesday = integer("next_tuesday")
-        val nextWednesday = integer("next_wednesday")
-        val nextThursday = integer("next_thursday")
-        val nextFriday = integer("next_friday")
-        val nextSaturday = integer("next_saturday")
-        val nextSunday = integer("next_sunday")
+        val nextWeeks = text("next_weeks")
 
-
-        override val primaryKey = PrimaryKey(id)
+        // preferences
+/*        val likedTags = text("liked_tags")
+        val dislikedTags = text("disliked_tags")
+        val allergicTags = text("allergic_tags")
+        val dislikedIngredients = text("disliked_ingredients")*/
     }
 
     init {
@@ -50,35 +47,10 @@ class UserService(database: Database) {
         lateinit var INSTANCE: UserService
     }
 
-    suspend fun create(user: User): Int = dbQuery {
-        Users.insert {
-            it[username] = user.username
-        }[Users.id]
-    }
-
-    suspend fun read(id: Int): User? {
-        return dbQuery {
-            Users.select { Users.id eq id }
-                .map { User(it[Users.username], it[Users.currentMonday], it[Users.currentTuesday],
-                    it[Users.currentWednesday],it[Users.currentThursday], it[Users.currentFriday],
-                    it[Users.currentSaturday], it[Users.currentSunday], it[Users.nextMonday], it[Users.nextTuesday],
-                    it[Users.nextWednesday], it[Users.nextThursday], it[Users.nextFriday], it[Users.nextSaturday],
-                    it[Users.nextSunday]) }
-                .singleOrNull()
-        }
-    }
-
-    suspend fun update(id: Int, user: User) {
-        dbQuery {
-            Users.update({ Users.id eq id }) {
-                it[username] = user.username
-            }
-        }
-    }
 
     suspend fun delete(id: Int) {
         dbQuery {
-            Users.deleteWhere { Users.id.eq(id) }
+            UsersService.deleteWhere { UsersService.id.eq(id) }
         }
     }
 }

@@ -4,33 +4,59 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
+import me.koendev.pws.currentUserId
 import me.koendev.pws.database.RecipeItem
+import me.koendev.pws.database.UserItem
 import org.jetbrains.exposed.sql.transactions.transaction
+import println
+import kotlin.random.Random
 
-fun Routing.recepten() {
-    get("/recepten") {
+fun Routing.mealplan() {
+    val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    get("/mealplan") {
+
+        val ids = mutableListOf<Int>()
+        val locked = mutableListOf<Boolean>()
+        for ((index, day) in daysOfWeek.withIndex()) {
+            val state = call.request.queryParameters[day]
+            ids.add(
+                if (state == "on") call.request.queryParameters["$index"]!!.toInt()
+                else Random.nextInt(1, 5044)
+            )
+            locked.add(
+                if (state == "on") true
+                else false
+            )
+        }
+
+        if(locked.all {it}) {
+            transaction {
+                val user = UserItem[currentUserId]
+
+                ids.toTypedArray().copyInto(user.nextWeeks, 7)
+                println("check here!")
+            }
+        }
+
+        ids.println()
+
         call.respondHtml(HttpStatusCode.OK) {
             head {
                 title {
-                    +"Recepten"
+                    +"Genereer uw mealplan"
                 }
             }
             body {
-                h1 {
-                    +"Recepten"
-                }
                 div {
-                    for (i in 1..50) {
-                        transaction {
-                            val recipe = RecipeItem.findById(i)
-                            if (recipe == null) {
-                                //todo koen you do error stuff here
-                                return@transaction
-                            } else {
+                    for (i in ids) {
+                        runBlocking {
+                            val recipe = RecipeItem[i]
+                            div {
+                                id = recipe.title
                                 div {
                                     style = "display: flex;"
-                                    id = i.toString()
                                     div {
                                         img {
                                             src = recipe.imageUrl
@@ -63,6 +89,20 @@ fun Routing.recepten() {
                             }
                         }
                     }
+                }
+                form(action = "/mealplan") {
+                    for ((index, day) in daysOfWeek.withIndex()) {
+                        input(type = InputType.hidden, name = "$index") {
+                            value = ids[index].toString()
+                        }
+                        input(type = InputType.checkBox, name = day) { id = day; checked = locked[index] }
+                        label {
+                            htmlFor = day
+                            +day
+                        }
+                        br {}
+                    }
+                    input(type = InputType.submit)
                 }
             }
         }

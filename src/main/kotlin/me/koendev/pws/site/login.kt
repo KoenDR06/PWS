@@ -36,14 +36,14 @@ fun Routing.login() {
         } else {
             username = username.trim()
             val userId = userService.dbQuery {
-                UserService.Users.select { UserService.Users.username eq username }
-                    .map { it[UserService.Users.id] }
+                UserService.UsersService.select { UserService.UsersService.username eq username }
+                    .map { it[UserService.UsersService.id] }
                     .firstOrNull()
             }
             if(userId == null) {
                 call.respondRedirect("/login")
             } else {
-                currentUserId = userId
+                currentUserId = -1
 
                 call.respondHtml(HttpStatusCode.OK) {
                     head {
