@@ -22,9 +22,24 @@ data class Recipe(val title: String, val description: String, val image_url: Str
     }
 }
 
+class RecipeItem(id: EntityID<Int>): IntEntity(id) {
+    companion object : IntEntityClass<RecipeItem>(RecipeService.Recipes)
+
+    var title by RecipeService.Recipes.title
+    var description by RecipeService.Recipes.description
+    var imageUrl by RecipeService.Recipes.imageUrl
+    var prepareTime by RecipeService.Recipes.prepareTime
+    var ovenTime by RecipeService.Recipes.ovenTime
+    var waitTime by RecipeService.Recipes.waitTime
+    var rating by RecipeService.Recipes.rating
+    var ratingCount by RecipeService.Recipes.ratingCount
+
+    val totalTime get() = prepareTime + ovenTime + waitTime
+}
+
+
 class RecipeService(database: Database) {
-    object Recipes : Table() {
-        val id = integer("id").autoIncrement()
+    object Recipes : IntIdTable() {
         val title = varchar("title", length = 128)
         val description = varchar("description", length = 1024)
         val imageUrl = varchar("image_url", length = 128)
@@ -33,9 +48,6 @@ class RecipeService(database: Database) {
         val waitTime = integer("wait_time")
         val rating = double("rating")
         val ratingCount = integer("rating_count")
-
-
-        override val primaryKey = PrimaryKey(id)
     }
 
     init {
@@ -49,44 +61,6 @@ class RecipeService(database: Database) {
 
     companion object {
         lateinit var INSTANCE: RecipeService
-    }
-
-    suspend fun create(recipe: Recipe): Int = dbQuery {
-        Recipes.insert {
-            it[title] = recipe.title
-            it[description] = recipe.description
-            it[imageUrl] = recipe.image_url
-            it[prepareTime] = recipe.prepare_time
-            it[ovenTime] = recipe.oven_time
-            it[waitTime] = recipe.wait_time
-            it[rating] = recipe.rating
-            it[ratingCount] = recipe.rating_count
-        }[Recipes.id]
-    }
-
-    suspend fun read(id: Int): Recipe? {
-        return dbQuery {
-            Recipes.select { Recipes.id eq id }
-                .map { Recipe(it[Recipes.title], it[Recipes.description], it[Recipes.imageUrl],
-                    it[Recipes.prepareTime], it[Recipes.ovenTime], it[Recipes.waitTime],
-                    it[Recipes.rating], it[Recipes.ratingCount]) }
-                .singleOrNull()
-        }
-    }
-
-    suspend fun update(id: Int, recipe: Recipe) {
-        dbQuery {
-            Recipes.update({ Recipes.id eq id }) {
-                it[title] = recipe.title
-                it[description] = recipe.description
-                it[imageUrl] = recipe.image_url
-                it[prepareTime] = recipe.prepare_time
-                it[ovenTime] = recipe.oven_time
-                it[waitTime] = recipe.wait_time
-                it[rating] = recipe.rating
-                it[ratingCount] = recipe.rating_count
-            }
-        }
     }
 
     suspend fun delete(id: Int) {

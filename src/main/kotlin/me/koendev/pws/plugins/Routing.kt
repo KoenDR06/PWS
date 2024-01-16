@@ -21,5 +21,9 @@ fun Application.configureRouting() {
     routing {
         webRouting()
         apiRouting()
+
+        get(Regex("(?<url>.*)/")) {
+            call.respondRedirect(("/" + call.parameters["url"]))
+        }
     }
 }

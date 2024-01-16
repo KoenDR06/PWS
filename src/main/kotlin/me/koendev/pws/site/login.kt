@@ -12,7 +12,6 @@ import me.koendev.pws.plugins.userService
 import org.jetbrains.exposed.sql.select
 
 fun Routing.login() {
-    get("/login/") {call.respondRedirect("/login")}
     get("/login") {
         var username = call.request.queryParameters["username"]
         if(username == null) {

@@ -3,19 +3,15 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.plugins.recipeService
+import me.koendev.pws.database.RecipeItem
+import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Routing.recept() {
-    get("/recepten/{recipe_id}/") {
-        val recipeId = call.parameters["recipe_id"] ?: throw IllegalArgumentException("Invalid ID")
-        call.respondRedirect("/recepten/${recipeId}")
-    }
     get("/recepten/{recipe_id}") {
         val recipeId = call.parameters["recipe_id"] ?: throw IllegalArgumentException("Invalid ID")
-        val recipe = recipeService.read(recipeId.toInt())
+        val recipe = transaction { RecipeItem.findById(recipeId.toInt()) }
         if (recipe == null) {
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {
@@ -44,7 +40,7 @@ fun Routing.recept() {
                     }
                     img {
                         style = "max-width: 25%;"
-                        src = recipe.image_url
+                        src = recipe.imageUrl
                     }
                     div {
                         id = "ingredients"

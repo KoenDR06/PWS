@@ -6,13 +6,15 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import me.koendev.pws.database.User
+import me.koendev.pws.database.UserItem
 import me.koendev.pws.plugins.userService
+import org.jetbrains.exposed.sql.transactions.transaction
 import println
 
 fun Routing.userRouting() {
     get("/api/users/{id}") {
         val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-        val user = userService.read(id)
+        val user = transaction { UserItem.findById(id) }
         if (user != null) {
             call.respond(HttpStatusCode.OK, user)
         } else {
@@ -22,7 +24,9 @@ fun Routing.userRouting() {
 
     post("/api/users") {
         val user = call.receive<User>()
-        val id = userService.create(user)
+        val id = UserItem.new {
+            user.username
+        }
         call.respond(HttpStatusCode.OK, id)
     }
 
@@ -39,7 +43,8 @@ fun Routing.userRouting() {
         val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
         try {
             val user = call.receive<User>()
-            userService.update(id, user = user)
+            //todo: fix this
+            //userService.update(id, user = user)
             call.respond(HttpStatusCode.OK, id)
         } catch(e: Exception) {
             e.println()

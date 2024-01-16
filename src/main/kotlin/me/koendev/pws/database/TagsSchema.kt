@@ -2,6 +2,11 @@ package me.koendev.pws.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
+import me.koendev.pws.database.UserItem.Companion.transform
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -9,12 +14,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
 data class Tag(val name: String)
-class TagsService(database: Database) {
-    object Tags : Table() {
-        val id = integer("id").autoIncrement()
-        val name = varchar("name", length = 32)
 
-        override val primaryKey = PrimaryKey(id)
+
+class TagItem(id: EntityID<Int>): IntEntity(id) {
+    companion object : IntEntityClass<TagItem>(TagsService.Tags)
+
+    var name by TagsService.Tags.name
+}
+
+
+class TagsService(database: Database) {
+    object Tags : IntIdTable() {
+        val name = varchar("name", length = 32)
     }
 
     init {
@@ -25,32 +36,6 @@ class TagsService(database: Database) {
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
-
-    companion object {
-        lateinit var INSTANCE: TagsService
-    }
-
-    suspend fun create(tag: Tag): Int = dbQuery {
-        Tags.insert {
-            it[name] = tag.name
-        }[Tags.id]
-    }
-
-    suspend fun read(id: Int): Tag? {
-        return dbQuery {
-            Tags.select { Tags.id eq id }
-                .map { Tag(it[Tags.name]) }
-                .singleOrNull()
-        }
-    }
-
-    suspend fun update(id: Int, tag: Tag) {
-        dbQuery {
-            Tags.update({ Tags.id eq id }) {
-                it[name] = tag.name
-            }
-        }
-    }
 
     suspend fun delete(id: Int) {
         dbQuery {
