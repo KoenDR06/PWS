@@ -27,11 +27,17 @@ class UserItem(id: EntityID<Int>): IntEntity(id) {
     companion object : IntEntityClass<UserItem>(UserService.UsersService)
 
     var username by UserService.UsersService.username
+    var diet by UserService.UsersService.diet
 
     // black magic to convert int array to text (it's just converting to csv (but then with ';'))
     var nextWeeks by UserService.UsersService.nextWeeks.transform(
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
+    )
+
+    var allergicTags by UserService.UsersService.allergicTags.transform(
+        { a -> a.joinToString(SEPARATOR) },
+        { str -> str.split(SEPARATOR).map { it.toBoolean() }.toTypedArray() }
     )
 
 
@@ -46,10 +52,11 @@ class UserService(database: Database) {
         val nextWeeks = text("next_weeks")
 
         // preferences
-/*        val likedTags = text("liked_tags")
+        val likedTags = text("liked_tags")
         val dislikedTags = text("disliked_tags")
         val allergicTags = text("allergic_tags")
-        val dislikedIngredients = text("disliked_ingredients")*/
+        val dislikedIngredients = text("disliked_ingredients")
+        val diet = integer("diet")
     }
 
     init {
@@ -63,6 +70,12 @@ class UserService(database: Database) {
 
     companion object {
         lateinit var INSTANCE: UserService
+        val dietOptions = mapOf(
+            "omnivore" to 0,
+            "vegetarian" to 1,
+            "pescatarian" to 2,
+            "vegan" to 3
+        )
     }
 
 

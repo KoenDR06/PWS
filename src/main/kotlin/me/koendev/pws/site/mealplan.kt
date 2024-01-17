@@ -3,8 +3,8 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.plugins.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 import me.koendev.pws.currentUserId
 import me.koendev.pws.database.RecipeItem
@@ -33,10 +33,8 @@ fun Routing.mealplan() {
 
         if(locked.all {it}) {
             transaction {
-                val user = UserItem[currentUserId]
-
-                ids.toTypedArray().copyInto(user.nextWeeks, 7)
-                println("check here!")
+                val user = UserItem.findById(currentUserId) ?: throw NotFoundException("User not found")
+                user.nextWeeks = user.nextWeeks.sliceArray(0..6) + ids.toTypedArray()
             }
         }
 
@@ -51,7 +49,7 @@ fun Routing.mealplan() {
             body {
                 div {
                     for (i in ids) {
-                        runBlocking {
+                        transaction {
                             val recipe = RecipeItem[i]
                             div {
                                 id = recipe.title

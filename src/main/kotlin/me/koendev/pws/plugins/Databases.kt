@@ -19,8 +19,8 @@ fun Application.configureDatabases() {
     database = Database.connect(
         url = dotEnv["DB_URL"],
         user = dotEnv["DB_USER"],
-        driver = "org.mariadb.jdbc.Driver",
-        password = dotEnv["DB_PASSWORD"]
+        password = dotEnv["DB_PASSWORD"],
+        driver = "org.mariadb.jdbc.Driver"
     )
 
     userService = UserService(database)

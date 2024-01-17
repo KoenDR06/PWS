@@ -3,141 +3,117 @@ package me.koendev.pws.site
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.plugins.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
+import me.koendev.pws.currentUserId
 import me.koendev.pws.database.TagItem
+import me.koendev.pws.database.UserItem
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 
 fun Routing.voorkeuren() {
+    val diets = listOf("omnivore", "pescetarian", "vegetarian", "vegan")
+    val allergies = listOf("gluten", "lactose", "nuts", "peanuts")
+
     get("/voorkeuren") {
-        call.respondHtml(HttpStatusCode.OK) {
-            head {
-                title {
-                    +"Voorkeuren aanpassen"
+        val allergiesInput = mutableListOf<Boolean>()
+        for (allergy in allergies) {
+            allergiesInput.add(call.request.queryParameters[allergy] != null)
+        }
+
+        if(call.request.queryParameters["submitted"] != null) {
+            transaction {
+                val user = UserItem.findById(currentUserId) ?: throw NotFoundException("User not found")
+                user.allergicTags = allergiesInput.toTypedArray()
+            }
+            call.respondHtml(HttpStatusCode.OK) {
+                head {
+                    title {
+                        +"Voorkeuren aanpassen"
+                    }
+                }
+                body {
+                    h1 {
+                        +"Uw voorkeuren zijn aangepast!"
+                    }
                 }
             }
-            body {
-                div {
-                    +"Vul hieronder uw dieet in:"
-                    input(type = InputType.radio) {
-                        name = "diet"
-                        required = true
-                        id = "omnivore"
-                    }
-                    label {
-                        htmlFor = "omnivore"
-                        +"Omnivoor"
-                    }
-                    br {
-                    }
-                    input(type = InputType.radio) {
-                        name = "diet"
-                        required = true
-                        id = "pescetarian"
-                    }
-                    label {
-                        htmlFor = "pescetarian"
-                        +"Pescetarier"
-                    }
-                    br {
-                    }
-                    input(type = InputType.radio) {
-                        name = "diet"
-                        required = true
-                        id = "vegetarian"
-                    }
-                    label {
-                        htmlFor = "vegetarian"
-                        +"Vegetarisch"
-                    }
-                    br {
-                    }
-                    input(type = InputType.radio) {
-                        name = "diet"
-                        required = true
-                        id = "vegan"
-                    }
-                    label {
-                        htmlFor = "vegan"
-                        +"Vegan"
+        }
+
+        else {
+            call.respondHtml(HttpStatusCode.OK) {
+                head {
+                    title {
+                        +"Voorkeuren aanpassen"
                     }
                 }
-                div {
-                    p {
-                        +"Kies hieronder uw allergieën:"
-                    }
-                    input(InputType.checkBox) {
-                        name = "allergies"
-                        required = true
-                        id = "gluten"
-                    }
-                    label {
-                        htmlFor = "gluten"
-                        +"Gluten"
-                    }
-                    br {
-                    }
-                    input(InputType.checkBox) {
-                        name = "allergies"
-                        required = true
-                        id = "lactose"
-                    }
-                    label {
-                        htmlFor = "lactose"
-                        +"Lactose"
-                    }
-                    br {
-                    }
-                    input(InputType.checkBox) {
-                        name = "allergies"
-                        required = true
-                        id = "nuts"
-                    }
-                    label {
-                        htmlFor = "nuts"
-                        +"Noten"
-                    }
-                    br {
-                    }
-                    input(InputType.checkBox) {
-                        name = "allergies"
-                        required = true
-                        id = "peanuts"
-                    }
-                    label {
-                        htmlFor = "peanuts"
-                        +"Pinda's"
-                    }
-                }
-                div {
-                    p {
-                        +"Kies hieronder de tags die u vaker wilt zien in uw recommendations:"
-                    }
-                    transaction {
-                        for (tag in TagItem.all()) {
-                            div {
-                                style = "display: flex;"
-                                p {
-                                    style = "margin-top: 0; margin-bottom: 0;"
-                                    +tag.name
+                body {
+                    form("/voorkeuren") {
+                        div {
+                            +"Vul hieronder uw dieet in:"
+                            for(diet in diets) {
+                                br {}
+                                input(type = InputType.radio, name = diet) {
+                                    id = diet
                                 }
-                                input(type = InputType.radio) {
-                                    name = tag.name
-                                    required = true
-                                    id = "0"
-                                }
-                                input(type = InputType.radio) {
-                                    name = tag.name
-                                    required = true
-                                    id = "1"
-                                }
-                                input(type = InputType.radio) {
-                                    name = tag.name
-                                    required = true
-                                    id = "2"
+                                label {
+                                    htmlFor = diet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                                    +diet
                                 }
                             }
+                        }
+                        div {
+                            p {
+                                +"Kies hieronder uw allergieën:"
+                            }
+                            for(allergy in allergies) {
+                                input(InputType.checkBox) {
+                                    name = allergy
+                                    id = allergy
+                                }
+                                label {
+                                    htmlFor = allergy
+                                    +allergy.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                                }
+                                br {
+                                }
+                            }
+                        }
+                        div {
+                            p {
+                                +"Kies hieronder de tags die u vaker wilt zien in uw recommendations:"
+                            }
+                            transaction {
+                                for (tag in TagItem.all()) {
+                                    div {
+                                        style = "display: flex;"
+                                        p {
+                                            style = "margin-top: 0; margin-bottom: 0;"
+                                            +tag.name
+                                        }
+                                        input(type = InputType.radio) {
+                                            name = tag.name
+                                            id = "0"
+                                        }
+                                        input(type = InputType.radio) {
+                                            name = tag.name
+                                            id = "1"
+                                        }
+                                        input(type = InputType.radio) {
+                                            name = tag.name
+                                            id = "2"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        input(type = InputType.submit) {
+
+                        }
+                        input(type = InputType.hidden, name = "submitted") {
+                            value = "true"
                         }
                     }
                 }
