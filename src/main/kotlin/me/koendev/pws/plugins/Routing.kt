@@ -2,6 +2,7 @@ package me.koendev.pws.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.http.content.*
 import io.ktor.server.plugins.doublereceive.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
@@ -24,6 +25,10 @@ fun Application.configureRouting() {
 
         get(Regex("(?<url>.*)/")) {
             call.respondRedirect(("/" + call.parameters["url"]))
+        }
+
+        static("/static") {
+            resources("static")
         }
     }
 }

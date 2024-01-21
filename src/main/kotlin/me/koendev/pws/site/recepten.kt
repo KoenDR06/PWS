@@ -12,54 +12,30 @@ fun Routing.recepten() {
     get("/recepten") {
         call.respondHtml(HttpStatusCode.OK) {
             head {
-                title {
-                    +"Recepten"
-                }
+                title { +"Recepten" }
+                link(rel = "stylesheet", href = "/static/receptenStyle.css", type = "text/css")
             }
             body {
-                h1 {
-                    +"Recepten"
-                }
-                div {
+                h1 { +"Recepten" }
+                div(classes = "recipes-container") {
                     for (i in 1..50) {
                         transaction {
                             val recipe = RecipeItem.findById(i)
-                            if (recipe == null) {
-                                //todo koen you do error stuff here
-                                return@transaction
-                            } else {
-                                div {
-                                    style = "display: flex;"
-                                    id = i.toString()
-                                    div {
-                                        img {
-                                            src = recipe.imageUrl
-                                            height = "100px"
+                            if (recipe != null) {
+                                a(href = "/recepten/${recipe.id.value}", classes = "recipe-card-link") {
+                                    div(classes = "recipe-card") {
+                                        img(src = recipe.imageUrl, alt = "Afbeelding van ${recipe.title}") {
+                                            classes = setOf("recipe-image")
                                         }
-                                    }
-                                    div {
-                                        h3 {
-                                            +recipe.title
-                                        }
-                                        p {
-                                            +recipe.description
+                                        div(classes = "recipe-info") {
+                                            h2(classes = "recipe-title") { +recipe.title }
+                                            p(classes = "recipe-description") { +recipe.description }
+                                            div(classes = "recipe-stats") {
+                                                span(classes = "recipe-time") { +"${recipe.totalTime} min" }
+                                            }
                                         }
                                     }
                                 }
-                                div {
-                                    style = "display: flex; "
-                                    p {
-                                        +"${recipe.totalTime} minuten om klaar te maken."
-                                    }
-                                    a {
-                                        style = "margin-top: 16px;" +
-                                                "margin-bottom: 16px;" +
-                                                "margin-left: 20px;"
-                                        href = "/recepten/${i}"
-                                        +"Klik hier om meer te lezen"
-                                    }
-                                }
-                                hr {}
                             }
                         }
                     }
