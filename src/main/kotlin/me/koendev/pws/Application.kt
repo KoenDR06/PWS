@@ -10,7 +10,7 @@ val dotEnv = dotenv()
 var currentUserId = -1
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = 80, host = "0.0.0.0", module = Application::module) // RUN IN ROOT!!!
         .start(wait = true)
 }
 
