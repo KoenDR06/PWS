@@ -20,6 +20,14 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes("Main-Class" to "me.koendev.pws.ApplicationKt")
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
+
 repositories {
     mavenCentral()
 }
@@ -50,4 +58,38 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+}
+
+tasks.register<Jar>("fatJarRecipeData") {
+    archiveBaseName.set("ConvertRecipeDataToDB")
+    archiveVersion.set("0.0.1")
+    archiveClassifier.set("fat")
+
+    from(sourceSets.main.get().output)
+
+    // Include runtime classpath dependencies in the JAR
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    manifest {
+        attributes["Main-Class"] = "me.koendev.pws.singleuse.ConvertRecipeDataToDbKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<Jar>("fatJarTagData") {
+    archiveBaseName.set("ConvertTagDataToDB")
+    archiveVersion.set("0.0.1")
+    archiveClassifier.set("fat")
+
+    from(sourceSets.main.get().output)
+
+    // Include runtime classpath dependencies in the JAR
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    manifest {
+        attributes["Main-Class"] = "me.koendev.pws.singleuse.ConvertTagDataToDbKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
