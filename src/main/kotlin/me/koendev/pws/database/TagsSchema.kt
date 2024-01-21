@@ -2,7 +2,6 @@ package me.koendev.pws.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
-import me.koendev.pws.database.UserItem.Companion.transform
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -40,6 +39,14 @@ class TagsService(database: Database) {
     suspend fun delete(id: Int) {
         dbQuery {
             Tags.deleteWhere { Tags.id.eq(id) }
+        }
+    }
+
+    suspend fun create(tag: Tag) {
+        dbQuery {
+            TagItem.new {
+                name = tag.name
+            }
         }
     }
 }

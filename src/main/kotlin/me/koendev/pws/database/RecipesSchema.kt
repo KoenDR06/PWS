@@ -68,4 +68,19 @@ class RecipeService(database: Database) {
             Recipes.deleteWhere { Recipes.id.eq(id) }
         }
     }
+
+    suspend fun create(recipe: Recipe) {
+        dbQuery {
+            RecipeItem.new {
+                title = recipe.title
+                description = recipe.description
+                imageUrl = recipe.image_url
+                prepareTime = recipe.prepare_time
+                ovenTime = recipe.oven_time
+                waitTime = recipe.wait_time
+                rating = recipe.rating
+                ratingCount = recipe.rating_count
+            }
+        }
+    }
 }
