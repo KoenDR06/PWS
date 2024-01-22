@@ -8,6 +8,7 @@ body {
 .recipes-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(8cm, 1fr));
+    grid-auto-rows: 1fr;
     gap: 20px;
     padding: 20px;
 }
@@ -19,6 +20,10 @@ body {
 }
 
 .recipe-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -34,12 +39,15 @@ body {
 
 .recipe-image {
     width: 100%;
-    height: 200px;
+    height: auto;
     object-fit: cover;
 }
 
 .recipe-info {
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .recipe-title {
@@ -50,13 +58,14 @@ body {
 .recipe-description {
     font-size: 0.9em;
     color: #666;
+    flex-grow: 1;
 }
 
 .recipe-stats {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 10px;
+    margin-top: auto;
 }
 
 .recipe-time {
