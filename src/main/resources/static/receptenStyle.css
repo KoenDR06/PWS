@@ -7,7 +7,7 @@ body {
 
 .recipes-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(8cm, 1fr));
     gap: 20px;
     padding: 20px;
 }
@@ -20,7 +20,7 @@ body {
 
 .recipe-card {
     background: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     cursor: pointer;
