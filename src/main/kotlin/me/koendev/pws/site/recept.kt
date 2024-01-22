@@ -5,13 +5,12 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.database.RecipeItem
-import org.jetbrains.exposed.sql.transactions.transaction
+import me.koendev.pws.database.RecipeService
 
-fun Routing.recept() {
+fun Routing.recept(recipeService: RecipeService) {
     get("/recepten/{recipe_id}") {
-        val recipeId = call.parameters["recipe_id"] ?: throw IllegalArgumentException("Invalid ID")
-        val recipe = transaction { RecipeItem.findById(recipeId.toInt()) }
+        val recipeId = call.parameters["recipe_id"]?.toIntOrNull() ?: throw IllegalArgumentException("Invalid ID")
+        val recipe = recipeService.getRecipeById(recipeId)
         if (recipe == null) {
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {

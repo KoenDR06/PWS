@@ -56,6 +56,18 @@ class RecipeService(database: Database) {
         }
     }
 
+    private val recipesCache: Map<Int, RecipeItem> = loadRecipesIntoCache(database)
+
+    private fun loadRecipesIntoCache(database: Database): Map<Int, RecipeItem> {
+        return transaction(database) {
+            RecipeItem.all().associateBy { it.id.value }
+        }
+    }
+
+    fun getRecipeById(id: Int): RecipeItem? {
+        return recipesCache[id]
+    }
+
     suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
