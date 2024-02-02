@@ -7,46 +7,41 @@ import me.koendev.pws.database.RecipeService
 import me.koendev.pws.dotEnv
 import me.koendev.pws.plugins.database
 import org.jetbrains.exposed.sql.Database
-import java.io.File
+import readInput
 
-fun main() {
-    database = Database.connect(
-        url = dotEnv["DB_URL"],
-        user = dotEnv["DB_USER"],
-        driver = "org.mariadb.jdbc.Driver",
-        password = dotEnv["DB_PASSWORD"]
-    )
-
-    val dataLocation = if(dotEnv["PRODUCTION"] == "True"){
-        "root/PWSSite/resources/static/new_recipe_data.json"
-    } else {
-        "src/main/resources/static/new_recipe_data.json"
-    }
-
-    val JSONRecipes = Json.decodeFromString<List<JSONRecipe>>(File("", dataLocation).readLines().joinToString(""))
-    val recipesAdded = mutableListOf<Int>()
-
-    runBlocking {
-        val db = RecipeService(database = database)
-
-        for (recipe in JSONRecipes) {
-            if(recipe.id.substring(3).toInt() !in recipesAdded) {
-                recipesAdded.add(recipe.id.substring(3).toInt())
-                val row = me.koendev.pws.database.Recipe(
-                    recipe.title,
-                    recipe.description,
-                    recipe.image_url,
-                    recipe.preparing_time_int,
-                    recipe.oven_time_int,
-                    recipe.waiting_time_int,
-                    recipe.rating,
-                    recipe.ratings_count.toInt()
-                )
-                db.create(row)
-            }
-        }
-    }
-}
+//fun main() {
+//    database = Database.connect(
+//        url = dotEnv["DB_URL"],
+//        user = dotEnv["DB_USER"],
+//        driver = "org.mariadb.jdbc.Driver",
+//        password = dotEnv["DB_PASSWORD"]
+//    )
+//
+//    val dataLocation = "static/new_recipe_data.json"
+//    val JSONRecipes = Json.decodeFromString<List<JSONRecipe>>(readInput(dataLocation).joinToString(""))
+//    val recipesAdded = mutableListOf<Int>()
+//
+//    runBlocking {
+//        val db = RecipeService(database = database)
+//
+//        for (recipe in JSONRecipes) {
+//            if(recipe.id.substring(3).toInt() !in recipesAdded) {
+//                recipesAdded.add(recipe.id.substring(3).toInt())
+//                val row = me.koendev.pws.database.Recipe(
+//                    recipe.title,
+//                    recipe.description,
+//                    recipe.image_url,
+//                    recipe.preparing_time_int,
+//                    recipe.oven_time_int,
+//                    recipe.waiting_time_int,
+//                    recipe.rating,
+//                    recipe.ratings_count.toInt()
+//                )
+//                db.create(row)
+//            }
+//        }
+//    }
+//}
 
 
 
