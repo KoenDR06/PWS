@@ -37,12 +37,10 @@ class RecipeTagsService(database: Database) {
 
         }
     }
-
-    suspend fun read(id: Int): RecipeTag? {
+    suspend fun read(id: Int): List<RecipeTag> {
         return dbQuery {
             RecipeTags.select { RecipeTags.recipeId eq id }
                 .map { RecipeTag(it[RecipeTags.recipeId], it[RecipeTags.tagId]) }
-                .singleOrNull()
         }
     }
 }

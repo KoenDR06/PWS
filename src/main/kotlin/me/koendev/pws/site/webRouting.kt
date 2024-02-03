@@ -6,8 +6,8 @@ import io.ktor.server.routing.*
 import me.koendev.pws.plugins.recipeService
 
 fun Routing.webRouting() {
-    recepten(recipeService)
-    recept(recipeService)
+    recepten()
+    recept()
     login()
     search()
     mealplan()
