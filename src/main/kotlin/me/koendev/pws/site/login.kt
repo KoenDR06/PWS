@@ -35,8 +35,8 @@ fun Routing.login() {
         } else {
             username = username.trim()
             val userId = userService.dbQuery {
-                UserService.UsersService.select { UserService.UsersService.username eq username }
-                    .map { it[UserService.UsersService.id] }
+                UserService.Users.select { UserService.Users.username eq username }
+                    .map { it[UserService.Users.id] }
                     .firstOrNull()
             }
             if(userId == null) {

@@ -24,18 +24,18 @@ data class User(val username: String, val currentMonday: Int? = null, val curren
 
 //todo: change class name
 class UserItem(id: EntityID<Int>): IntEntity(id) {
-    companion object : IntEntityClass<UserItem>(UserService.UsersService)
+    companion object : IntEntityClass<UserItem>(UserService.Users)
 
-    var username by UserService.UsersService.username
-    var diet by UserService.UsersService.diet
+    var username by UserService.Users.username
+    var diet by UserService.Users.diet
 
     // black magic to convert int array to text (it's just converting to csv (but then with ';'))
-    var nextWeeks by UserService.UsersService.nextWeeks.transform(
+    var nextWeeks by UserService.Users.nextWeeks.transform(
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
     )
 
-    var allergicTags by UserService.UsersService.allergicTags.transform(
+    var allergicTags by UserService.Users.allergicTags.transform(
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toBoolean() }.toTypedArray() }
     )
@@ -45,7 +45,7 @@ class UserItem(id: EntityID<Int>): IntEntity(id) {
 
 
 class UserService(database: Database) {
-    object UsersService : IntIdTable() {
+    object Users : IntIdTable() {
         val username = varchar("username", length = 64)
 
         // Mealplan columns
@@ -61,7 +61,7 @@ class UserService(database: Database) {
 
     init {
         transaction(database) {
-            SchemaUtils.createMissingTablesAndColumns(UsersService)
+            SchemaUtils.createMissingTablesAndColumns(Users)
         }
     }
 
@@ -81,7 +81,7 @@ class UserService(database: Database) {
 
     suspend fun delete(id: Int) {
         dbQuery {
-            UsersService.deleteWhere { UsersService.id.eq(id) }
+            Users.deleteWhere { Users.id.eq(id) }
         }
     }
 }

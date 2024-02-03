@@ -1,10 +1,7 @@
 package me.koendev.pws.plugins
 
 import io.ktor.server.application.*
-import me.koendev.pws.database.RecipeService
-import me.koendev.pws.database.RecipeTagsService
-import me.koendev.pws.database.TagsService
-import me.koendev.pws.database.UserService
+import me.koendev.pws.database.*
 import me.koendev.pws.dotEnv
 import org.jetbrains.exposed.sql.Database
 
@@ -14,6 +11,9 @@ lateinit var recipeService: RecipeService
 lateinit var userService: UserService
 lateinit var tagsService: TagsService
 lateinit var recipeTagsService: RecipeTagsService
+lateinit var ingredientsService: IngredientsService
+lateinit var recipeIngredientService: RecipeIngredientService
+lateinit var stepService: StepService
 
 fun Application.configureDatabases() {
     database = Database.connect(
@@ -27,4 +27,8 @@ fun Application.configureDatabases() {
     recipeService = RecipeService(database)
     tagsService = TagsService(database)
     recipeTagsService = RecipeTagsService(database)
+    ingredientsService = IngredientsService(database)
+    recipeIngredientService = RecipeIngredientService(database)
+    stepService = StepService(database)
+
 }

@@ -77,8 +77,7 @@ fun Routing.voorkeuren() {
                                     htmlFor = allergy
                                     +allergy.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                                 }
-                                br {
-                                }
+                                br {}
                             }
                         }
                         div {

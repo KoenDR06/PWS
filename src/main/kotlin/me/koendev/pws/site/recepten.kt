@@ -5,9 +5,9 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.database.RecipeService
+import me.koendev.pws.plugins.recipeService
 
-fun Routing.recepten( recipeService: RecipeService) {
+fun Routing.recepten() {
     get("/recepten") {
         call.respondHtml(HttpStatusCode.OK) {
             head {
