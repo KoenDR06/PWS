@@ -7,9 +7,14 @@ import io.ktor.server.plugins.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
+import me.koendev.pws.database.IngredientItem
+import me.koendev.pws.database.RecipeIngredient
+import me.koendev.pws.database.StepItem
 import me.koendev.pws.plugins.ingredientsService
 import me.koendev.pws.plugins.recipeIngredientService
 import me.koendev.pws.plugins.recipeService
+import me.koendev.pws.plugins.stepService
+import println
 import java.util.*
 
 fun Routing.recept() {
@@ -43,7 +48,7 @@ fun Routing.recept() {
                         +recipe.title
                     }
                     img {
-                        style = "max-width: 25%;"
+                        style = "max-width: 512px;"
                         src = recipe.imageUrl
                     }
                     div {
@@ -53,35 +58,49 @@ fun Routing.recept() {
                             +"Ingrediënten"
                         }
 
+                        val recipeIngredients: List<RecipeIngredient>
                         runBlocking {
-                            val recipeIngredients = recipeIngredientService.read(recipeId)
+                            recipeIngredients = recipeIngredientService.read(recipeId)
+                        }
 
-                            for (recipeIngredient in recipeIngredients) {
-                                val ingredient = ingredientsService.read(recipeIngredient.ingredientId) ?:
-                                                 throw NotFoundException("Ingredient was not found in database")
-                                input(InputType.checkBox) {
-                                    name = ingredient.name
-                                    id = ingredient.name
-                                }
-                                label {
-                                    htmlFor = ingredient.name
-                                    +ingredient.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-                                }
-                                br {}
+                        for (recipeIngredient in recipeIngredients) {
+                            val ingredient: IngredientItem
+                            runBlocking {
+                                ingredient = ingredientsService.read(recipeIngredient.ingredientId)
+                                    ?: throw NotFoundException("Ingredient was not found in database")
                             }
+
+                            var amountString = ingredient.amount.toString()
+                            if (amountString.endsWith(".0")) {
+                                amountString = amountString.slice(0..amountString.length - 3)
+                            }
+
+                            input(InputType.checkBox) {
+                                name = ingredient.name
+                                id = ingredient.name
+                            }
+                            label {
+                                htmlFor = ingredient.name
+                                +(amountString + " " + ingredient.unit + " " + ingredient.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+                            }
+                            br {}
                         }
                     }
                     div {
                         id = "steps"
                         h3 {
-                            +"Bereiding:"
+                            +"Bereiding"
                         }
-//                        for(step in recipe.steps) {
-//                            p {
-//                                style = "max-width: 25%;"
-//                                +step
-//                            }
-//                        }
+
+                        runBlocking {
+                            for (step in stepService.read(recipeId)) {
+                                p {
+                                    style = "max-width: 512px;"
+                                    +step.content
+                                }
+                            }
+
+                        }
                     }
 
                 }

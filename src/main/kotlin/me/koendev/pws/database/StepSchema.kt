@@ -55,10 +55,10 @@ class StepService(database: Database) {
         }
     }
 
-    suspend fun read(recipeId: Int) : List<StepItem> {
+    suspend fun read(recipeId: Int): List<Step> {
         return dbQuery {
             Steps.select { Steps.forRecipe eq recipeId }
-                .map { StepItem(EntityID(recipeId, Steps)) }
+                .map { Step(it[Steps.content], it[Steps.forRecipe]) }
         }
     }
 }

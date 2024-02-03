@@ -58,10 +58,20 @@ class IngredientsService(database: Database) {
         }
     }
 
-    suspend fun read(id: Int) : IngredientItem? {
+
+    suspend fun read(id: Int): IngredientItem? {
         return dbQuery {
-            Ingredients.select { Ingredients.id eq id }
-                .map { IngredientItem(EntityID(id, Ingredients)) }
-        }.firstOrNull()
+            Ingredients
+                .select { Ingredients.id eq id }
+                .map { row ->
+                    IngredientItem[EntityID(id, Ingredients)] // Use the companion object's factory method
+                        .apply {
+                            name = row[Ingredients.name]
+                            amount = row[Ingredients.amount]
+                            unit = row[Ingredients.unit]
+                        }
+                }
+                .firstOrNull()
+        }
     }
 }
