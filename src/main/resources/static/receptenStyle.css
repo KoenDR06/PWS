@@ -68,10 +68,25 @@ body {
     margin-top: auto;
 }
 
-.recipe-time {
+.recipe-time, .lock-button {
     font-size: 0.8em;
     color: #333;
     background: #eee;
     padding: 5px 10px;
     border-radius: 15px;
+}
+
+
+.trash-bin {
+    width: 50px; /* Set the width of your SVG */
+    height: auto;
+}
+
+.lid {
+    transition: transform 0.3s ease; /* Add a smooth transition for the lid movement */
+}
+
+/* When hovering, apply a transform to rotate the lid */
+.trash-bin:hover .lid {
+    transform: rotate(-45deg); /* Adjust the rotation angle based on your SVG */
 }

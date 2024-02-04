@@ -14,7 +14,7 @@ import println
 import kotlin.random.Random
 
 fun Routing.mealplan() {
-    val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    val daysOfWeek = listOf("Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag")
     get("/mealplan") {
 
         val ids = mutableListOf<Int>()
@@ -42,58 +42,65 @@ fun Routing.mealplan() {
 
         call.respondHtml(HttpStatusCode.OK) {
             head {
-                title {
-                    +"Genereer uw mealplan"
+                title { +"Genereer uw mealplan" }
+                link (rel = "stylesheet", href = "/static/receptenStyle.css", type = "text/css")
+                script {
+                    src = "/static/change-svg-icon.js"
                 }
             }
             body {
-                div {
-                    for (i in ids) {
-                        transaction {
-                            val recipe = RecipeItem[i]
-                            div {
-                                id = recipe.title
-                                div {
-                                    style = "display: flex;"
-                                    div {
-                                        img {
-                                            src = recipe.imageUrl
-                                            height = "100px"
-                                        }
+                form(action = "/mealplan") {
+                    div (classes = "recipes-container") {
+                        for ((index, recipeId) in ids.withIndex()) {
+                            transaction {
+                                val recipe = RecipeItem[recipeId]
+                                div (classes = "recipe-card") {
+                                    img (src = recipe.imageUrl, alt = "Afbeelding van ${recipe.title}") {
+                                        classes = setOf("recipe-image")
                                     }
-                                    div {
-                                        h3 {
-                                            +recipe.title
+                                    div (classes = "recipe-info") {
+                                        h4 (classes = "recipe-title") {+daysOfWeek[index]}
+                                        h2 (classes = "recipe-title") { +recipe.title }
+                                        p (classes = "recipe-description") { +recipe.description }
+                                        div (classes = "recipe-stats") {
+                                            span (classes = "recipe-time") { +"${recipe.totalTime} min" }
+                                            label (classes = "lock-button") {
+
+                                                htmlFor = daysOfWeek[index]
+
+                                                input (type = InputType.checkBox, name = daysOfWeek[index]) {
+                                                    id = daysOfWeek[index]
+                                                    checked = locked[index]
+                                                }
+                                                div (classes = "trash-bin") {
+                                                    img (classes = "trash-bin", src = "/static/trash-bin-closed.svg", alt = "Closed Trash Bin")
+                                                }
+//                                                div (classes = "trash-bin") {
+//                                                    img (classes = "trash-bin", src ="/static/trash-bin-open.svg", alt = "Open Trash Bin") {
+//                                                        style="display: none;"
+//                                                    }
+//                                                }
+
+                                            }
                                         }
-                                        p {
-                                            +recipe.description
+
+                                        input (type = InputType.hidden, name = "$index") {
+                                            value = ids[index].toString()
                                         }
                                     }
                                 }
-                                div {
-                                    style = "display: flex; "
-                                    p {
-                                        +"${recipe.totalTime} minuten om klaar te maken."
-                                    }
-                                    a {
-                                        style = "margin-top: 16px;" +
-                                                "margin-bottom: 16px;" +
-                                                "margin-left: 20px;"
-                                        href = "/recepten/${i}"
-                                        +"Klik hier om meer te lezen"
-                                    }
-                                }
-                                hr {}
                             }
                         }
                     }
-                }
-                form(action = "/mealplan") {
+
                     for ((index, day) in daysOfWeek.withIndex()) {
-                        input(type = InputType.hidden, name = "$index") {
-                            value = ids[index].toString()
+                        input (type = InputType.hidden, name = "$index") {
+                            value = "${ids[index]}"
                         }
-                        input(type = InputType.checkBox, name = day) { id = day; checked = locked[index] }
+                        input (type = InputType.checkBox, name = day) {
+                            id = day
+                            checked = locked[index]
+                        }
                         label {
                             htmlFor = day
                             +day
