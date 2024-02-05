@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import println
-import readInput
+import java.io.File
 
 fun main() {
     database = Database.connect(
@@ -21,8 +21,12 @@ fun main() {
         password = dotEnv["DB_PASSWORD"]
     )
 
-    val recipeLoc = "static/new_recipe_data.json"
-    val JSONRecipes = Json.decodeFromString<List<JSONRecipe>>(readInput(recipeLoc).joinToString(""))
+    val dataLocation = if(dotEnv["PRODUCTION"] == "True"){
+        "root/PWSSite/resources/static/new_recipe_data.json"
+    } else {
+        "src/main/resources/static/new_recipe_data.json"
+    }
+    val JSONRecipes = Json.decodeFromString<List<JSONRecipe>>(File("", dataLocation).readLines().joinToString(""))
 
     val recipes: MutableMap<String, Int> = mutableMapOf()
     var t = 0

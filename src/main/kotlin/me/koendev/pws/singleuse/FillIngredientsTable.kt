@@ -11,7 +11,7 @@ import me.koendev.pws.plugins.recipeService
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.select
 import println
-import readInput
+import java.io.File
 
 fun main() {
     database = Database.connect(
@@ -21,8 +21,13 @@ fun main() {
         password = dotEnv["DB_PASSWORD"]
     )
 
-    val dataLocation = "static/new_recipe_data.json"
-    val JSONRecipes = Json.decodeFromString<List<JSONRecipe>>(readInput(dataLocation).joinToString(""))
+    val dataLocation = if(dotEnv["PRODUCTION"] == "True"){
+        "root/PWSSite/resources/static/new_recipe_data.json"
+    } else {
+        "src/main/resources/static/new_recipe_data.json"
+    }
+
+    val JSONRecipes = Json.decodeFromString<List<JSONRecipe>>(File("", dataLocation).readLines().joinToString(""))
     val recipesAdded = mutableListOf<Int>()
 
     runBlocking {
