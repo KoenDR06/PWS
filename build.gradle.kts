@@ -93,3 +93,54 @@ tasks.register<Jar>("fatJarTagData") {
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+tasks.register<Jar>("fatJarIngredientsTable") {
+    archiveBaseName.set("FillIngredientsTable")
+    archiveVersion.set("0.0.1")
+    archiveClassifier.set("fat")
+
+    from(sourceSets.main.get().output)
+
+    // Include runtime classpath dependencies in the JAR
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    manifest {
+        attributes["Main-Class"] = "me.koendev.pws.singleuse.FillIngredientsTableKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<Jar>("fatJarStepTable") {
+    archiveBaseName.set("FillStepTable")
+    archiveVersion.set("0.0.1")
+    archiveClassifier.set("fat")
+
+    from(sourceSets.main.get().output)
+
+    // Include runtime classpath dependencies in the JAR
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    manifest {
+        attributes["Main-Class"] = "me.koendev.pws.singleuse.FillStepTableKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<Jar>("fatJarRecipeToTag") {
+    archiveBaseName.set("RecipeToTagConversion")
+    archiveVersion.set("0.0.1")
+    archiveClassifier.set("fat")
+
+    from(sourceSets.main.get().output)
+
+    // Include runtime classpath dependencies in the JAR
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    manifest {
+        attributes["Main-Class"] = "me.koendev.pws.singleuse.RecipeToTagConversionKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
