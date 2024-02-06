@@ -1,5 +1,6 @@
 package me.koendev.pws.plugins
 
+import IAmATeaPot
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
@@ -38,6 +39,12 @@ fun Application.configureRouting() {
                     }
                 }
             }
+        }
+        status(HttpStatusCode.IAmATeaPot) { call, _ ->
+            call.respondText("I'm a teapot")
+        }
+        exception<Throwable> { call, cause ->
+            call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
         }
     }
     routing {

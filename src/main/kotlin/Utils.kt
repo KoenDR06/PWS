@@ -1,3 +1,4 @@
+import io.ktor.http.*
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -19,3 +20,5 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+val HttpStatusCode.Companion.IAmATeaPot get() = HttpStatusCode(418, "I'm a tea pot")
