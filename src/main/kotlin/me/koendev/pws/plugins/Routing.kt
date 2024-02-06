@@ -17,7 +17,7 @@ fun Application.configureRouting() {
     install(DoubleReceive)
     install(Resources)
     install(StatusPages) {
-        status(HttpStatusCode.NotFound) { call, status ->
+        status(HttpStatusCode.NotFound) { call, _ ->
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {
                     title {
