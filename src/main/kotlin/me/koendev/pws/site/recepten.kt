@@ -13,8 +13,38 @@ fun Routing.recepten() {
             head {
                 title { +"Recepten" }
                 link (rel = "stylesheet", href = "/static/receptenStyle.css", type = "text/css")
+                link (rel = "stylesheet", href = "/static/navBar.css", type = "text/css")
             }
             body {
+                div (classes = "nav-bar") {
+                    ul (classes = "navbar"){
+                        li {
+                            a {
+                                href = "/recepten"
+                                +"Recepten"
+                            }
+                        }
+                        li {
+                            a {
+                                href = "/zoeken"
+                                +"Zoeken"
+                            }
+                        }
+                        li {
+                            a {
+                                href = "/mealplan"
+                                +"Mealplan"
+                            }
+                        }
+                        li {
+                            a {
+                                href = "/voorkeuren"
+                                +"Voorkeuren"
+                            }
+                        }
+                    }
+                }
+
                 h1 { +"Recepten" }
                 div (classes = "recipes-container") {
                     for (i in 1..50) {
