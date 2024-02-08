@@ -16,13 +16,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 const val SEPARATOR = ";"
 
 @Serializable
-data class User(val username: String, val currentMonday: Int? = null, val currentTuesday: Int? = null, val currentWednesday: Int? = null,
-                val currentThursday: Int? = null, val currentFriday: Int? = null, val currentSaturday: Int? = null, val currentSunday: Int? = null,
-                val nextMonday: Int? = null, val nextTuesday: Int? = null, val nextWednesday: Int? = null, val nextThursday: Int? = null,
-                val nextFriday: Int? = null, val nextSaturday: Int? = null, val nextSunday: Int? = null)
+data class User(val username: String, val password: String)
 
 
-//todo: change class name
 class UserItem(id: EntityID<Int>): IntEntity(id) {
     companion object : IntEntityClass<UserItem>(UserService.Users)
 

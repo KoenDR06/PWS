@@ -33,13 +33,14 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-auth-jvm")
-    implementation("io.ktor:ktor-server-double-receive-jvm")
-    implementation("io.ktor:ktor-server-resources")
-    implementation("io.ktor:ktor-server-host-common-jvm")
-    implementation("io.ktor:ktor-server-status-pages-jvm")
+    implementation("io.ktor:ktor-server-auth-jwt")
+    implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-cors-jvm")
+    implementation("io.ktor:ktor-server-double-receive-jvm")
+    implementation("io.ktor:ktor-server-host-common-jvm")
+    implementation("io.ktor:ktor-server-resources")
+    implementation("io.ktor:ktor-server-status-pages-jvm")
     implementation("io.ktor:ktor-server-compression-jvm")
     implementation("io.ktor:ktor-server-default-headers-jvm")
     implementation("io.ktor:ktor-server-forwarded-header-jvm")
