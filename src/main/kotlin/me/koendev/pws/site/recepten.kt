@@ -16,30 +16,29 @@ fun Routing.recepten() {
                 link (rel = "stylesheet", href = "/static/navBar.css", type = "text/css")
             }
             body {
-                div (classes = "nav-bar") {
-                    ul (classes = "navbar"){
-                        li {
-                            a {
-                                href = "/recepten"
-                                +"Recepten"
-                            }
-                        }
-                        li {
-                            a {
-                                href = "/zoeken"
-                                +"Zoeken"
-                            }
-                        }
-                        li {
-                            a {
-                                href = "/mealplan"
-                                +"Mealplan"
-                            }
-                        }
-                        li {
-                            a {
-                                href = "/voorkeuren"
-                                +"Voorkeuren"
+                div("nav-bar") {
+                    a(classes = "active left-align") {
+                        href = "/"
+                        +"Homepagina"
+                    }
+                    a(classes = "left-align") {
+                        href = "/mealplan"
+                        +"Mealplan"
+                    }
+                    a (classes = "left-align"){
+                        href = "/voorkeuren"
+                        +"Voorkeuren"
+                    }
+
+
+                    a (classes = "right-align") {
+                        href = "/login"
+                        +"Login"
+                    }
+                    div (classes = "right-align search-div") {
+                        form (action = "/zoeken") {
+                            input(type = InputType.text, name = "query", classes = "searchbox") {
+                                placeholder = "Zoek hier naar een recept:"
                             }
                         }
                     }
