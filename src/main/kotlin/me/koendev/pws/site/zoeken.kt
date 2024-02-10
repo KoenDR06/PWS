@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 import me.koendev.pws.database.RecipeService
 import me.koendev.pws.plugins.recipeService
+import me.koendev.pws.site.templates.navBar
 import org.jetbrains.exposed.sql.select
 import println
 import kotlin.math.ceil
@@ -29,9 +30,12 @@ fun Routing.search() {
         call.respondHtml(HttpStatusCode.OK) {
             head {
                 title { +"Zoeken" }
-                link (rel = "stylesheet", href = "/static/receptenStyle.css", type = "text/css")
+                link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
             }
             body {
+                navBar("zoeken")
+
                 form(action = "/zoeken") {
                     input(type = InputType.text, name = "query") {
                         placeholder = "Zoek hier naar een recept:"

@@ -9,6 +9,7 @@ import kotlinx.html.*
 import me.koendev.pws.currentUserId
 import me.koendev.pws.database.TagItem
 import me.koendev.pws.database.UserItem
+import me.koendev.pws.site.templates.navBar
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -30,11 +31,14 @@ fun Routing.voorkeuren() {
             }
             call.respondHtml(HttpStatusCode.OK) {
                 head {
+                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                     title {
-                        +"Voorkeuren aanpassen"
+                        +"Uw voorkeuren zijn aangepast!"
                     }
                 }
                 body {
+                    navBar("mealplan")
                     h1 {
                         +"Uw voorkeuren zijn aangepast!"
                     }
@@ -45,11 +49,15 @@ fun Routing.voorkeuren() {
         else {
             call.respondHtml(HttpStatusCode.OK) {
                 head {
+                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                     title {
                         +"Voorkeuren aanpassen"
                     }
                 }
                 body {
+                    navBar("voorkeuren")
+
                     form("/voorkeuren") {
                         div {
                             +"Vul hieronder uw dieet in:"

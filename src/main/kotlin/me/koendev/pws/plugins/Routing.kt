@@ -12,6 +12,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import me.koendev.pws.api.apiRouting
+import me.koendev.pws.site.templates.navBar
 import me.koendev.pws.site.webRouting
 
 fun Application.configureRouting() {
@@ -21,11 +22,12 @@ fun Application.configureRouting() {
         status(HttpStatusCode.NotFound) { call, _ ->
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {
-                    title {
-                        +"Pagina niet gevonden..."
-                    }
+                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                    title { +"Pagina niet gevonden..." }
                 }
                 body {
+                    navBar()
                     h1 {
                         +"Helaas hebben we deze pagina niet kunnen vinden."
                     }

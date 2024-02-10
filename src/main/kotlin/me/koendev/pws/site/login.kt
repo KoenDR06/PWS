@@ -9,6 +9,7 @@ import kotlinx.html.*
 import me.koendev.pws.currentUserId
 import me.koendev.pws.database.UserService
 import me.koendev.pws.plugins.userService
+import me.koendev.pws.site.templates.navBar
 import org.jetbrains.exposed.sql.select
 
 fun Routing.login() {
@@ -17,11 +18,15 @@ fun Routing.login() {
         if(username == null) {
             call.respondHtml(HttpStatusCode.OK) {
                 head {
+                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                     title {
                         +"Inloggen"
                     }
                 }
                 body {
+                    navBar("login")
+
                     form(action = "/login") {
                         input(type = InputType.text, name = "username")
                         br {}
@@ -46,11 +51,15 @@ fun Routing.login() {
 
                 call.respondHtml(HttpStatusCode.OK) {
                     head {
+                        link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                        link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                         title {
                             +"Ingelogd"
                         }
                     }
                     body {
+                        navBar("login")
+
                         h1 {
                             +"Inloggen succesvol. Welkom, $username."
                         }

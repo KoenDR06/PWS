@@ -9,6 +9,7 @@ import kotlinx.html.*
 import me.koendev.pws.currentUserId
 import me.koendev.pws.database.RecipeItem
 import me.koendev.pws.database.UserItem
+import me.koendev.pws.site.templates.navBar
 import org.jetbrains.exposed.sql.transactions.transaction
 import println
 import kotlin.random.Random
@@ -43,12 +44,15 @@ fun Routing.mealplan() {
         call.respondHtml(HttpStatusCode.OK) {
             head {
                 title { +"Genereer uw mealplan" }
-                link (rel = "stylesheet", href = "/static/receptenStyle.css", type = "text/css")
+                link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                 script {
-                    src = "/static/change-svg-icon.js"
+                    src = "/static/scripts/change-svg-icon.js"
                 }
             }
             body {
+                navBar("mealplan")
+
                 form(action = "/mealplan") {
                     div (classes = "recipes-container") {
                         for ((index, recipeId) in ids.withIndex()) {
@@ -73,7 +77,7 @@ fun Routing.mealplan() {
                                                     checked = locked[index]
                                                 }
                                                 div (classes = "trash-bin") {
-                                                    img (classes = "trash-bin", src = "/static/trash-bin-closed.svg", alt = "Closed Trash Bin")
+                                                    img (classes = "trash-bin", src = "/static/images/trash-bin-closed.svg", alt = "Closed Trash Bin")
                                                 }
 //                                                div (classes = "trash-bin") {
 //                                                    img (classes = "trash-bin", src ="/static/trash-bin-open.svg", alt = "Open Trash Bin") {

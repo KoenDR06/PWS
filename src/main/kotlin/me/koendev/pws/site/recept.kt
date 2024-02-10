@@ -14,6 +14,7 @@ import me.koendev.pws.plugins.ingredientsService
 import me.koendev.pws.plugins.recipeIngredientService
 import me.koendev.pws.plugins.recipeService
 import me.koendev.pws.plugins.stepService
+import me.koendev.pws.site.templates.navBar
 import println
 import java.util.*
 
@@ -24,12 +25,14 @@ fun Routing.recept() {
         if (recipe == null) {
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {
+                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                     title {
                         +"Recept niet gevonden."
                     }
                 }
 
                 body {
+                    navBar()
                     p {
                         +"We hebben dit recept niet kunnen vinden."
                     }
@@ -38,12 +41,15 @@ fun Routing.recept() {
         } else {
             call.respondHtml(HttpStatusCode.OK) {
                 head {
+                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                     title {
                         +recipe.title
                     }
                 }
 
                 body {
+                    navBar()
                     h1 {
                         +recipe.title
                     }
