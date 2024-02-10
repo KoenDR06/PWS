@@ -9,6 +9,7 @@ import kotlinx.html.*
 import me.koendev.pws.database.RecipeService
 import me.koendev.pws.plugins.recipeService
 import me.koendev.pws.site.templates.navBar
+import me.koendev.pws.site.templates.recipeCard
 import org.jetbrains.exposed.sql.select
 import println
 import kotlin.math.ceil
@@ -53,28 +54,9 @@ fun Routing.search() {
                 hr {}
 
 
-
                 div (classes = "recipes-container") {
                     for (i in recipes.slice(start..end)) {
-                        runBlocking {
-                            val recipe = recipeService.getRecipeById(i.value)
-                            if (recipe != null) {
-                                a(href = "/recepten/${recipe.id.value}", classes = "recipe-card-link") {
-                                    div(classes = "recipe-card") {
-                                        img(src = recipe.imageUrl, alt = "Afbeelding van ${recipe.title}") {
-                                            classes = setOf("recipe-image")
-                                        }
-                                        div(classes = "recipe-info") {
-                                            h2(classes = "recipe-title") { +recipe.title }
-                                            p(classes = "recipe-description") { +recipe.description }
-                                            div(classes = "recipe-stats") {
-                                                span(classes = "recipe-time") { +"${recipe.totalTime} min" }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        recipeCard(i.value)
                     }
                 }
             }
