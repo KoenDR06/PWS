@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.plugins.recipeService
 import me.koendev.pws.site.templates.navBar
 import me.koendev.pws.site.templates.recipeCard
 

@@ -8,8 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -23,9 +21,11 @@ class UserItem(id: EntityID<Int>): IntEntity(id) {
     companion object : IntEntityClass<UserItem>(UserService.Users)
 
     var username by UserService.Users.username
+    var password by UserService.Users.password
+
     var diet by UserService.Users.diet
 
-    // black magic to convert int array to text (it's just converting to csv (but then with ';'))
+    // black magic to convert int array to text (it's just converting to csv (but then with ';' ))
     var nextWeeks by UserService.Users.nextWeeks.transform(
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
@@ -43,6 +43,7 @@ class UserItem(id: EntityID<Int>): IntEntity(id) {
 class UserService(database: Database) {
     object Users : IntIdTable() {
         val username = varchar("username", length = 64)
+        val password = varchar("password", length = 256)
 
         // Mealplan columns
         val nextWeeks = text("next_weeks")
@@ -74,10 +75,14 @@ class UserService(database: Database) {
         )
     }
 
+    suspend fun create(userUsername: String, userPassword: String): Int {
+        return dbQuery {
+            val newUserId = UserItem.new {
+                username = userUsername
+                password = userPassword
+            }.id.value
 
-    suspend fun delete(id: Int) {
-        dbQuery {
-            Users.deleteWhere { Users.id.eq(id) }
+            newUserId
         }
     }
 }

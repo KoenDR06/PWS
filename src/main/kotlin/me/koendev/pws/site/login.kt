@@ -20,6 +20,8 @@ fun Routing.login() {
                 head {
                     link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                     link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                    script (src = "/static/scripts/post-login-data.js") {}
+                    script (src = "/static/scripts/redirect-register.js") {}
                     title {
                         +"Inloggen"
                     }
@@ -28,11 +30,21 @@ fun Routing.login() {
                     navBar("login")
 
                     form(action = "/login") {
-                        input(type = InputType.text, name = "username")
+                        input(type = InputType.text, name = "username") {
+                            id = "username"
+                        }
                         br {}
-                        input(type = InputType.submit) {
+                        input(type = InputType.password, name = "password") {
+                            id = "password"
+                        }
+                        br {}
+                        input(type = InputType.button) {
                             value = "Log in"
-                            required = true
+                            onClick = "submitLoginForm()"
+                        }
+                        input(type = InputType.button) {
+                            value = "Registreren"
+                            onClick = "redirectRegister()"
                         }
                     }
                 }

@@ -4,7 +4,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 import me.koendev.pws.database.RecipeService
 import me.koendev.pws.plugins.recipeService
@@ -15,7 +14,7 @@ import println
 import kotlin.math.ceil
 import kotlin.math.min
 
-fun Routing.search() {
+fun Routing.zoeken() {
     get("/zoeken") {
         val query = call.request.queryParameters["query"] ?: ""
         val pageNumber = call.request.queryParameters["page"] ?: "1"
