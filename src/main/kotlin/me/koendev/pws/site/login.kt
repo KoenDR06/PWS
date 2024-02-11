@@ -20,6 +20,7 @@ fun Routing.login() {
                 head {
                     link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                     link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                    link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                     script (src = "/static/scripts/post-login-data.js") {}
                     script (src = "/static/scripts/redirect-register.js") {}
                     title {
@@ -29,13 +30,16 @@ fun Routing.login() {
                 body {
                     navBar("login")
 
-                    form(action = "/login") {
+                    form {
                         input(type = InputType.text, name = "username") {
                             id = "username"
+                            placeholder = "Gebruikersnaam"
                         }
                         br {}
                         input(type = InputType.password, name = "password") {
                             id = "password"
+                            placeholder = "Wachtwoord"
+
                         }
                         br {}
                         input(type = InputType.button) {
@@ -46,6 +50,10 @@ fun Routing.login() {
                             value = "Registreren"
                             onClick = "redirectRegister()"
                         }
+                    }
+
+                    h3 {
+                        id = "status-text"
                     }
                 }
             }

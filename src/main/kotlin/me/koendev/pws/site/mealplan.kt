@@ -27,8 +27,7 @@ fun Routing.mealplan() {
                 else Random.nextInt(1, 5044)
             )
             locked.add(
-                if (state == "on") true
-                else false
+                state == "on"
             )
         }
 
@@ -46,9 +45,14 @@ fun Routing.mealplan() {
                 title { +"Genereer uw mealplan" }
                 link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                link (rel = "stylesheet", href = "/static/styles/mealplan.css", type = "text/css")
+                link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
+
                 script {
                     src = "/static/scripts/change-svg-icon.js"
                 }
+
+
             }
             body {
                 navBar("mealplan")
@@ -69,22 +73,20 @@ fun Routing.mealplan() {
                                         div (classes = "recipe-stats") {
                                             span (classes = "recipe-time") { +"${recipe.totalTime} min" }
                                             label (classes = "lock-button") {
-
                                                 htmlFor = daysOfWeek[index]
 
-                                                input (type = InputType.checkBox, name = daysOfWeek[index]) {
+                                                input(type = InputType.hidden, name = "$index") {
+                                                    value = "${ids[index]}"
+                                                }
+                                                input (type = InputType.checkBox, name = daysOfWeek[index], classes = "hidden-checkbox") {
                                                     id = daysOfWeek[index]
                                                     checked = locked[index]
                                                 }
-                                                div (classes = "trash-bin") {
-                                                    img (classes = "trash-bin", src = "/static/images/trash-bin-closed.svg", alt = "Closed Trash Bin")
-                                                }
-//                                                div (classes = "trash-bin") {
-//                                                    img (classes = "trash-bin", src ="/static/trash-bin-open.svg", alt = "Open Trash Bin") {
-//                                                        style="display: none;"
-//                                                    }
-//                                                }
 
+                                                img (classes = "trash-bin", src = if (locked[index]) "/static/images/chefs-hat.svg" else "/static/images/refresh-recipe.svg", alt = "Icon") {
+                                                    id = "svg-icon-$index"
+                                                    onClick = "changeSvgIcon(${daysOfWeek[index]}, $index)"
+                                                }
                                             }
                                         }
 
@@ -95,21 +97,6 @@ fun Routing.mealplan() {
                                 }
                             }
                         }
-                    }
-
-                    for ((index, day) in daysOfWeek.withIndex()) {
-                        input (type = InputType.hidden, name = "$index") {
-                            value = "${ids[index]}"
-                        }
-                        input (type = InputType.checkBox, name = day) {
-                            id = day
-                            checked = locked[index]
-                        }
-                        label {
-                            htmlFor = day
-                            +day
-                        }
-                        br {}
                     }
                     input(type = InputType.submit)
                 }

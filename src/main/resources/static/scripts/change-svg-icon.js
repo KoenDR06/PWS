@@ -1,11 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var svgImage = document.getElementById('trash-bin');
+function changeSvgIcon(checkboxId, svgId) {
+    // let checkbox = document.getElementById(checkboxId);
+    let svg = document.getElementById(`svg-icon-${svgId}`);
 
-    svgImage.addEventListener('mouseover', function() {
-        svgImage.src = '/static/trash-bin-open.svg';
-    });
+    // console.log(checkboxId)
 
-    svgImage.addEventListener('mouseout', function() {
-        svgImage.src = '/static/trash-bin-closed.svg';
-    });
-});
+    // checkbox.checked = !checkbox.checked
+
+    if (svg.src.includes("/static/images/refresh-recipe.svg")) {
+        svg.src = "/static/images/chefs-hat.svg"
+    } else if (svg.src.includes("/static/images/chefs-hat.svg")) {
+        svg.src = "/static/images/refresh-recipe.svg"
+    } else {
+        console.log(svg.src)
+    }
+}

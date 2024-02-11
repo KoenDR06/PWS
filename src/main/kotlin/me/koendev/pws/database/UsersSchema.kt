@@ -2,12 +2,15 @@ package me.koendev.pws.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
+import sha256
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -30,13 +33,22 @@ class UserItem(id: EntityID<Int>): IntEntity(id) {
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
     )
-
     var allergicTags by UserService.Users.allergicTags.transform(
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toBoolean() }.toTypedArray() }
     )
-
-
+    var likedTags by UserService.Users.likedTags.transform(
+        { a -> a.joinToString(SEPARATOR) },
+        { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
+    )
+    var dislikedTags by UserService.Users.dislikedTags.transform(
+        { a -> a.joinToString(SEPARATOR) },
+        { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
+    )
+    var dislikedIngredients by UserService.Users.dislikedIngredients.transform(
+        { a -> a.joinToString(SEPARATOR) },
+        { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
+    )
 }
 
 
@@ -75,14 +87,43 @@ class UserService(database: Database) {
         )
     }
 
-    suspend fun create(userUsername: String, userPassword: String): Int {
+    suspend fun create(user: User): Int {
         return dbQuery {
             val newUserId = UserItem.new {
-                username = userUsername
-                password = userPassword
+                username = user.username
+                password = user.password.sha256()
+                nextWeeks = Array(14) { 1 }
+                allergicTags = Array(4) { false }
+                diet = 0
+                likedTags = Array(0) { 1 }
+                dislikedTags = Array(0) { 1 }
+                dislikedIngredients = Array(0) { 1 }
+
             }.id.value
 
             newUserId
         }
+    }
+
+    suspend fun validate(user: User): User? {
+        val userToValidate = dbQuery {
+            Users.select {
+                (Users.username eq user.username) and (Users.password eq user.password.sha256())
+            }.map {
+                User(it[Users.username], it[Users.password])
+            }.singleOrNull()
+        }
+        return userToValidate
+    }
+
+    suspend fun read(user: User): List<User> {
+        val users = dbQuery {
+            Users.select {
+                (Users.username eq user.username) and (Users.password eq user.password.sha256())
+            }.map {
+                User(it[Users.username], it[Users.password])
+            }
+        }
+        return users
     }
 }

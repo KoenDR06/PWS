@@ -75,17 +75,3 @@ body {
     padding: 5px 10px;
     border-radius: 15px;
 }
-
-
-.trash-bin {
-    width: 50px;
-    height: auto;
-}
-
-.lid {
-    transition: transform 0.3s ease;
-}
-
-.trash-bin:hover .lid {
-    transform: rotate(-45deg);
-}
