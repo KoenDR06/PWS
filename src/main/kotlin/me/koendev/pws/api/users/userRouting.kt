@@ -1,5 +1,6 @@
 package me.koendev.pws.api.users
 
+import LikeRequest
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
@@ -49,6 +50,17 @@ fun Routing.userRouting() {
             call.respond(HttpStatusCode.OK)
         } else if (userToCreate.username == "" || userToCreate.password == "") {
             call.respond(HttpStatusCode.BadRequest)
+        } else {
+            call.respond(HttpStatusCode.NotAcceptable)
+        }
+    }
+
+    post("/api/users/like") {
+        val req = call.receive<LikeRequest>()
+
+        val resultStatus = userService.likeRecipe(req.userId.toInt(), req.recipeId.toInt())
+        if (resultStatus) {
+            call.respond(HttpStatusCode.OK)
         } else {
             call.respond(HttpStatusCode.NotAcceptable)
         }

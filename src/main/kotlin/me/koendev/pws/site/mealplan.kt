@@ -57,19 +57,25 @@ fun Routing.mealplan() {
             body {
                 navBar("mealplan")
 
+                h1 { +"Mealplan" }
+
                 form(action = "/mealplan") {
                     div (classes = "recipes-container") {
                         for ((index, recipeId) in ids.withIndex()) {
                             transaction {
                                 val recipe = RecipeItem[recipeId]
                                 div (classes = "recipe-card") {
-                                    img (src = recipe.imageUrl, alt = "Afbeelding van ${recipe.title}") {
-                                        classes = setOf("recipe-image")
+                                    a (href = "/recepten/${recipe.id.value}", classes = "recipe-card-link") {
+                                        img(src = recipe.imageUrl, alt = "Afbeelding van ${recipe.title}") {
+                                            classes = setOf("recipe-image")
+                                        }
                                     }
                                     div (classes = "recipe-info") {
-                                        h4 (classes = "recipe-title") {+daysOfWeek[index]}
-                                        h2 (classes = "recipe-title") { +recipe.title }
-                                        p (classes = "recipe-description") { +recipe.description }
+                                        a (href = "/recepten/${recipe.id.value}", classes = "recipe-card-link") {
+                                            h4(classes = "recipe-title") { +daysOfWeek[index] }
+                                            h2(classes = "recipe-title") { +recipe.title }
+                                            p(classes = "recipe-description") { +recipe.description }
+                                        }
                                         div (classes = "recipe-stats") {
                                             span (classes = "recipe-time") { +"${recipe.totalTime} min" }
                                             label (classes = "lock-button") {
@@ -89,7 +95,6 @@ fun Routing.mealplan() {
                                                 }
                                             }
                                         }
-
                                         input (type = InputType.hidden, name = "$index") {
                                             value = ids[index].toString()
                                         }
@@ -98,7 +103,9 @@ fun Routing.mealplan() {
                             }
                         }
                     }
-                    input(type = InputType.submit)
+                    input(type = InputType.submit) {
+                        value = "Genereer nieuwe recepten"
+                    }
                 }
             }
         }

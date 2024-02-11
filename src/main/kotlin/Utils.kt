@@ -1,4 +1,5 @@
 import io.ktor.http.*
+import kotlinx.serialization.Serializable
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -22,3 +23,7 @@ fun String.sha256() = BigInteger(1, MessageDigest.getInstance("SHA256").digest(t
 fun Any?.println() = println(this)
 
 val HttpStatusCode.Companion.IAmATeaPot get() = HttpStatusCode(418, "I'm a tea pot")
+
+
+@Serializable
+data class LikeRequest(val userId: String, val recipeId: String)

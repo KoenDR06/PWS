@@ -19,8 +19,7 @@ async function submitLoginForm() {
             statusText.innerText = "U bent ingelogd, welkom!"
         } else if (response.status === 400) {
             statusText.innerText = "Uw gebruikersnaam en wachtwoord mogen niet leeg zijn."
-        }
-        else {
+        } else {
             statusText.innerText = "Uw wachtwoord of gebruikersnaam klopt niet. Probeer het nog een keer."
         }
     } catch (error) {

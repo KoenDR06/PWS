@@ -75,3 +75,8 @@ body {
     padding: 5px 10px;
     border-radius: 15px;
 }
+
+.recipe-stats button {
+    border: 0;
+    border-radius: 15px;
+}

@@ -32,6 +32,9 @@ fun Routing.zoeken() {
                 title { +"Zoeken" }
                 link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                script {
+                    src = "/static/scripts/like-recipe.js"
+                }
             }
             body {
                 navBar("zoeken")

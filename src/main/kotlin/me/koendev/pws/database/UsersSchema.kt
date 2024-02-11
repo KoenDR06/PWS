@@ -2,22 +2,19 @@ package me.koendev.pws.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
-import sha256
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import sha256
 
 const val SEPARATOR = ";"
 
 @Serializable
-data class User(val username: String, val password: String)
+data class User(val username: String, val password: String, val likedRecipes: String = "")
 
 
 class UserItem(id: EntityID<Int>): IntEntity(id) {
@@ -49,6 +46,10 @@ class UserItem(id: EntityID<Int>): IntEntity(id) {
         { a -> a.joinToString(SEPARATOR) },
         { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
     )
+    var likedRecipes by UserService.Users.likedRecipes.transform(
+        { a -> a.joinToString(SEPARATOR) },
+        { str -> str.split(SEPARATOR).map { it.toInt() }.toTypedArray() }
+    )
 }
 
 
@@ -60,12 +61,13 @@ class UserService(database: Database) {
         // Mealplan columns
         val nextWeeks = text("next_weeks")
 
-        // preferences
+        // Preferences
         val likedTags = text("liked_tags")
         val dislikedTags = text("disliked_tags")
         val allergicTags = text("allergic_tags")
         val dislikedIngredients = text("disliked_ingredients")
         val diet = integer("diet")
+        val likedRecipes = text("liked_recipes")
     }
 
     init {
@@ -98,6 +100,7 @@ class UserService(database: Database) {
                 likedTags = Array(0) { 1 }
                 dislikedTags = Array(0) { 1 }
                 dislikedIngredients = Array(0) { 1 }
+                likedRecipes = Array(0) { 1 }
 
             }.id.value
 
@@ -121,9 +124,38 @@ class UserService(database: Database) {
             Users.select {
                 (Users.username eq user.username) and (Users.password eq user.password.sha256())
             }.map {
-                User(it[Users.username], it[Users.password])
+                User(it[Users.username], it[Users.password], it[Users.likedRecipes])
             }
         }
         return users
+    }
+
+    suspend fun likeRecipe(userId : Int, recipeId: Int): Boolean {
+        val likedRecipesColumn = dbQuery {
+            Users.select {
+                Users.id eq userId
+            }.map {
+                it[Users.likedRecipes]
+            }.singleOrNull()
+        } ?: return false
+
+        val userLikedRecipes: MutableList<Int> = mutableListOf()
+        if (likedRecipesColumn.split(SEPARATOR)[0] != "") {
+            for (recipe in likedRecipesColumn.split(SEPARATOR)) {
+                userLikedRecipes.add(recipe.toInt())
+            }
+        }
+
+        if (recipeId in userLikedRecipes) {
+            return false
+        } else {
+            userLikedRecipes.add(recipeId)
+            transaction {
+                Users.update({ Users.id eq userId }) {
+                    it[likedRecipes] = userLikedRecipes.joinToString(SEPARATOR)
+                }
+            }
+            return true
+        }
     }
 }
