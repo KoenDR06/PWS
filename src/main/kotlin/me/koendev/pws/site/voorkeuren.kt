@@ -33,6 +33,7 @@ fun Routing.voorkeuren() {
                 head {
                     link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                     link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                    link (rel = "icon", href = "/favicon.ico", type = "image/x-icon")
                     title {
                         +"Uw voorkeuren zijn aangepast!"
                     }
