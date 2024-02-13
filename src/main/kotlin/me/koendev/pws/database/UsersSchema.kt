@@ -158,4 +158,15 @@ class UserService(database: Database) {
             return true
         }
     }
+
+    suspend fun readByUsername(username: String): Int? {
+        val userId = dbQuery {
+            Users.select {
+                (Users.username eq username)
+            }.map {
+                it[Users.id]
+            }.singleOrNull()
+        }
+        return userId?.value
+    }
 }

@@ -2,13 +2,16 @@ package me.koendev.pws.site
 
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.html.*
 import io.ktor.server.plugins.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.currentUserId
 import me.koendev.pws.database.TagItem
 import me.koendev.pws.database.UserItem
+import me.koendev.pws.plugins.userService
 import me.koendev.pws.site.templates.navBar
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -18,111 +21,118 @@ fun Routing.voorkeuren() {
     val diets = listOf("omnivore", "pescetarian", "vegetarian", "vegan")
     val allergies = listOf("gluten", "lactose", "nuts", "peanuts")
 
-    get("/voorkeuren") {
-        val allergiesInput = mutableListOf<Boolean>()
-        for (allergy in allergies) {
-            allergiesInput.add(call.request.queryParameters[allergy] != null)
-        }
-
-        if(call.request.queryParameters["submitted"] != null) {
-            transaction {
-                val user = UserItem.findById(currentUserId) ?: throw NotFoundException("User not found")
-                user.allergicTags = allergiesInput.toTypedArray()
-            }
-            call.respondHtml(HttpStatusCode.OK) {
-                head {
-                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
-                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
-                    link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
-                    title {
-                        +"Uw voorkeuren zijn aangepast!"
-                    }
+    authenticate("jwt") {
+        get("/voorkeuren") {
+            val username = call.principal<JWTPrincipal>()?.payload?.getClaim("username")
+            val userId = userService.readByUsername(username?.asString() ?: "")
+            if (userId == null) {
+                call.respondText("Er is iets misgegaan...")
+            } else {
+                val allergiesInput = mutableListOf<Boolean>()
+                for (allergy in allergies) {
+                    allergiesInput.add(call.request.queryParameters[allergy] != null)
                 }
-                body {
-                    navBar("mealplan")
-                    h1 {
-                        +"Uw voorkeuren zijn aangepast!"
-                    }
-                }
-            }
-        }
 
-        else {
-            call.respondHtml(HttpStatusCode.OK) {
-                head {
-                    link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
-                    link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
-                    link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
-                    title {
-                        +"Voorkeuren aanpassen"
+                if (call.request.queryParameters["submitted"] != null) {
+                    transaction {
+                        val user = UserItem.findById(userId) ?: throw NotFoundException("User not found")
+                        user.allergicTags = allergiesInput.toTypedArray()
                     }
-                }
-                body {
-                    navBar("voorkeuren")
-
-                    form("/voorkeuren") {
-                        div {
-                            +"Vul hieronder uw dieet in:"
-                            for(diet in diets) {
-                                br {}
-                                input(type = InputType.radio, name = diet) {
-                                    id = diet
-                                }
-                                label {
-                                    htmlFor = diet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-                                    +diet
-                                }
+                    call.respondHtml(HttpStatusCode.OK) {
+                        head {
+                            link(rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                            link(rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                            link(rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
+                            title {
+                                +"Uw voorkeuren zijn aangepast!"
                             }
                         }
-                        div {
-                            p {
-                                +"Kies hieronder uw allergieën:"
-                            }
-                            for(allergy in allergies) {
-                                input(InputType.checkBox) {
-                                    name = allergy
-                                    id = allergy
-                                }
-                                label {
-                                    htmlFor = allergy
-                                    +allergy.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-                                }
-                                br {}
+                        body {
+                            navBar("mealplan")
+                            h1 {
+                                +"Uw voorkeuren zijn aangepast!"
                             }
                         }
-                        div {
-                            p {
-                                +"Kies hieronder de tags die u vaker wilt zien in uw recommendations:"
+                    }
+                } else {
+                    call.respondHtml(HttpStatusCode.OK) {
+                        head {
+                            link(rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
+                            link(rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                            link(rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
+                            title {
+                                +"Voorkeuren aanpassen"
                             }
-                            transaction {
-                                for (tag in TagItem.all()) {
-                                    div {
-                                        style = "display: flex;"
-                                        p {
-                                            style = "margin-top: 0; margin-bottom: 0;"
-                                            +tag.name
+                        }
+                        body {
+                            navBar("voorkeuren")
+
+                            form("/voorkeuren") {
+                                div {
+                                    +"Vul hieronder uw dieet in:"
+                                    for (diet in diets) {
+                                        br {}
+                                        input(type = InputType.radio, name = diet) {
+                                            id = diet
                                         }
-                                        input(type = InputType.radio) {
-                                            name = tag.name
-                                            id = "0"
-                                        }
-                                        input(type = InputType.radio) {
-                                            name = tag.name
-                                            id = "1"
-                                        }
-                                        input(type = InputType.radio) {
-                                            name = tag.name
-                                            id = "2"
+                                        label {
+                                            htmlFor =
+                                                diet.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                                            +diet
                                         }
                                     }
                                 }
-                            }
-                        }
-                        input(type = InputType.submit) {
+                                div {
+                                    p {
+                                        +"Kies hieronder uw allergieën:"
+                                    }
+                                    for (allergy in allergies) {
+                                        input(InputType.checkBox) {
+                                            name = allergy
+                                            id = allergy
+                                        }
+                                        label {
+                                            htmlFor = allergy
+                                            +allergy.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                                        }
+                                        br {}
+                                    }
+                                }
+                                div {
+                                    p {
+                                        +"Kies hieronder de tags die u vaker wilt zien in uw recommendations:"
+                                    }
+                                    transaction {
+                                        for (tag in TagItem.all()) {
+                                            div {
+                                                style = "display: flex;"
+                                                p {
+                                                    style = "margin-top: 0; margin-bottom: 0;"
+                                                    +tag.name
+                                                }
+                                                input(type = InputType.radio) {
+                                                    name = tag.name
+                                                    id = "0"
+                                                }
+                                                input(type = InputType.radio) {
+                                                    name = tag.name
+                                                    id = "1"
+                                                }
+                                                input(type = InputType.radio) {
+                                                    name = tag.name
+                                                    id = "2"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                input(type = InputType.submit) {
 
-                        }
-                        input(type = InputType.hidden, name = "submitted") {
-                            value = "true"
+                                }
+                                input(type = InputType.hidden, name = "submitted") {
+                                    value = "true"
+                                }
+                            }
                         }
                     }
                 }

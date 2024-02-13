@@ -26,7 +26,6 @@ fun Application.configureSecurity() {
 
             authHeader { call ->
                 val cookieValue = call.request.cookies["JWT_TOKEN"] ?: return@authHeader null
-
                 try {
                     cookieValue.println()
                     parseAuthorizationHeader("Bearer $cookieValue")
@@ -43,37 +42,9 @@ fun Application.configureSecurity() {
                     null
                 }
             }
-            challenge { defaultScheme, realm ->
+            challenge { _, _ ->
                 call.respondRedirect("/login", permanent = false)
-                defaultScheme.println()
-                realm.println()
             }
         }
-
-//        jwt("auth-jwt") {
-//            realm = YOUR_JWT_REALM
-//            val jwtAlgorithm = Algorithm.HMAC256(YOUR_JWT_SECRET_KEY)
-//            verifier(JWT.require(jwtAlgorithm).withIssuer(YOUR_JWT_ISSUER).build())
-//
-//            authHeader { call ->
-//                val cookieValue = call.request.cookies["YOUR_COOKIE_NAME_FOR_TOKEN"] ?: return@authHeader null
-//                Log.i(TAG, " cookieValue: $cookieValue")
-//
-//                try {
-//                    parseAuthorizationHeader("Bearer $cookieValue")
-//                } catch (cause: IllegalArgumentException) {
-//                    cause.message
-//                    null
-//                }
-//            }
-//
-//            validate { credential ->
-//                if (credential.payload.getClaim("name").asString() == YOUR_JWT_ISSUER) {
-//                    JWTPrincipal(credential.payload)
-//                } else {
-//                    null
-//                }
-//            }
-//        }
     }
 }

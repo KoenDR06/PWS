@@ -33,11 +33,11 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-core:1.6.6")
-    implementation("io.ktor:ktor-client-json:1.6.6")
-    implementation("io.ktor:ktor-client-serialization:1.6.6")
-    implementation("io.ktor:ktor-client-logging:1.6.6")
-    implementation("io.ktor:ktor-client-features:1.6.6")
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-json:$ktor_version")
+    implementation("io.ktor:ktor-client-serialization:$ktor_version")
+    implementation("io.ktor:ktor-client-logging:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt")
     implementation("io.ktor:ktor-server-core-jvm")

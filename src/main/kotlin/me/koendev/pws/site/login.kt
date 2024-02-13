@@ -6,7 +6,6 @@ import io.ktor.server.html.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
-import me.koendev.pws.currentUserId
 import me.koendev.pws.database.UserService
 import me.koendev.pws.plugins.userService
 import me.koendev.pws.site.templates.navBar
@@ -67,8 +66,6 @@ fun Routing.login() {
             if(userId == null) {
                 call.respondRedirect("/login")
             } else {
-                currentUserId = -1
-
                 call.respondHtml(HttpStatusCode.OK) {
                     head {
                         link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")

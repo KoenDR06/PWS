@@ -20,11 +20,4 @@ fun Routing.webRouting() {
     get("/") {
         call.respondRedirect("/recepten")
     }
-
-    authenticate("jwt") {
-        get("/secured") {
-            val principal = call.principal<JWTPrincipal>()
-            call.respondText("Hello, ${principal?.payload?.subject ?: "Unknown"}!")
-        }
-    }
 }

@@ -2,18 +2,15 @@ package me.koendev.pws.site.templates
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
-import me.koendev.pws.currentUserId
 import me.koendev.pws.database.RecipeItem
 import me.koendev.pws.database.UserItem
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun FlowContent.recipeCard(recipeId: Int) {
+fun FlowContent.recipeCard(recipeId: Int, userId: Int) {
     transaction {
         runBlocking {
             val recipe = RecipeItem.findById(recipeId)
-            val user = UserItem.findById(currentUserId)
-
-
+            val user = UserItem.findById(userId)
 
             if (recipe != null && user != null) {
                 val imgSrc = if (recipe.id.value in user.likedRecipes) {
@@ -35,9 +32,9 @@ fun FlowContent.recipeCard(recipeId: Int) {
                         div(classes = "recipe-stats") {
                             span(classes = "recipe-time") { +"${recipe.totalTime} min" }
                             button {
-                                onClick = "likeRecipe(\"$currentUserId\", \"${recipe.id.value}\")"
+                                onClick = "likeRecipe(\"$userId\", \"${recipe.id.value}\")"
                                 img {
-                                    style = "width: 50px; height: auto;"
+                                    style = "width: 1.5cm; height: auto;"
                                     src = imgSrc
                                     id = "heart-image-${recipe.id.value}"
                                 }
