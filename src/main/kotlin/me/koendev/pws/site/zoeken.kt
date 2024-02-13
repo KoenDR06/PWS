@@ -10,7 +10,6 @@ import me.koendev.pws.plugins.recipeService
 import me.koendev.pws.site.templates.navBar
 import me.koendev.pws.site.templates.recipeCard
 import org.jetbrains.exposed.sql.select
-import println
 import kotlin.math.ceil
 import kotlin.math.min
 
@@ -22,7 +21,6 @@ fun Routing.zoeken() {
             RecipeService.Recipes.select { RecipeService.Recipes.title like "%$query%" }
                 .map { it[RecipeService.Recipes.id] }
         }
-        recipes.size.println()
 
         val start = 50 * (pageNumber.toInt() - 1)
         val end = min(start + 49, recipes.size - 1)
@@ -32,6 +30,7 @@ fun Routing.zoeken() {
                 title { +"Zoeken" }
                 link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                 script {
                     src = "/static/scripts/like-recipe.js"
                 }

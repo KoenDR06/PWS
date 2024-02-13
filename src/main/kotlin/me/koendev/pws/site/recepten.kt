@@ -14,7 +14,7 @@ fun Routing.recepten() {
         call.respondHtml(HttpStatusCode.OK) {
             head {
                 title { +"Recepten" }
-                link (rel = "icon", href = "/favicon.ico", type = "image/x-icon")
+                link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                 link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                 script {

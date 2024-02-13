@@ -24,7 +24,7 @@ fun Routing.recept() {
             call.respondHtml(HttpStatusCode.NotFound) {
                 head {
                     link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
-                    link (rel = "icon", href = "/favicon.ico", type = "image/x-icon")
+                    link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                     title {
                         +"Recept niet gevonden."
                     }
@@ -42,7 +42,7 @@ fun Routing.recept() {
                 head {
                     link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                     link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
-                    link (rel = "icon", href = "/favicon.ico", type = "image/x-icon")
+                    link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                     title {
                         +recipe.title
                     }

@@ -21,14 +21,10 @@ fun Routing.webRouting() {
         call.respondRedirect("/recepten")
     }
 
-    authenticate("auth-jwt") {
-        get("/hello") {
-            val token = call.request.cookies["JWT_TOKEN"]
-            val principal = JWTPrincipal(JWT.decode(token))
-
-            val username = principal.payload.getClaim("username").asString()
-            val expiresAt = principal.expiresAt?.time?.minus(System.currentTimeMillis())
-            call.respondText("Hello, $username! Token is expired at $expiresAt ms.")
+    authenticate("jwt") {
+        get("/secured") {
+            val principal = call.principal<JWTPrincipal>()
+            call.respondText("Hello, ${principal?.payload?.subject ?: "Unknown"}!")
         }
     }
 }

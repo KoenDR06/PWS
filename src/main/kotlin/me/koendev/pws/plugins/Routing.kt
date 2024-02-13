@@ -24,20 +24,13 @@ fun Application.configureRouting() {
                 head {
                     link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                     link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
+                    link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                     title { +"Pagina niet gevonden..." }
                 }
                 body {
                     navBar()
                     h1 {
                         +"Helaas hebben we deze pagina niet kunnen vinden."
-                    }
-                    p {
-                        +"Klik hieronder op de knop om naar de homepagina te gaan."
-                    }
-                    form(action = "/") {
-                        input(type = InputType.submit) {
-                            value = "Homepagina"
-                        }
                     }
                 }
             }

@@ -16,7 +16,7 @@ fun Routing.registreren() {
                 }
                 link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
-                link (rel = "icon", href = "/favicon.ico", type = "image/x-icon")
+                link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
                 script (src = "/static/scripts/post-register-data.js") {}
             }
             body {

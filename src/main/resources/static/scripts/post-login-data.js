@@ -15,7 +15,7 @@ async function submitLoginForm() {
             }),
         });
 
-        if (response.ok) {
+        if (response.status === 200) {
             statusText.innerText = "U bent ingelogd, welkom!"
         } else if (response.status === 400) {
             statusText.innerText = "Uw gebruikersnaam en wachtwoord mogen niet leeg zijn."

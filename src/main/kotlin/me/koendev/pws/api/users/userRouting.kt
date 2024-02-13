@@ -12,10 +12,12 @@ import io.ktor.util.date.*
 import me.koendev.pws.database.User
 import me.koendev.pws.dotEnv
 import me.koendev.pws.plugins.userService
+import sha256
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 fun Routing.userRouting() {
     post("/api/users/login") {
@@ -32,10 +34,10 @@ fun Routing.userRouting() {
                 .withExpiresAt(Date(System.currentTimeMillis() + 60 * 30 * 1000))
                 .sign(Algorithm.HMAC256(dotEnv["JWT_SECRET"]))
 
-            val expirationTime = LocalDateTime.now().plus(Duration.ofDays(7)) // Set expiration time to 7 days from now
+            val expirationTime = LocalDateTime.now().plus(Duration.ofMinutes(30)) // Set expiration time to 7 days from now
             val gmtDate = GMTDate(expirationTime.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli())
 
-            call.response.cookies.append(Cookie("JWT_TOKEN", token, expires = gmtDate))
+            call.response.cookies.append(Cookie(name = "JWT_TOKEN", value = token, expires = gmtDate, path = "/"))
             call.respond(hashMapOf("token" to token))
         }
     }

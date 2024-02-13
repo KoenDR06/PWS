@@ -11,7 +11,6 @@ import me.koendev.pws.database.RecipeItem
 import me.koendev.pws.database.UserItem
 import me.koendev.pws.site.templates.navBar
 import org.jetbrains.exposed.sql.transactions.transaction
-import println
 import kotlin.random.Random
 
 fun Routing.mealplan() {
@@ -38,15 +37,13 @@ fun Routing.mealplan() {
             }
         }
 
-        ids.println()
-
         call.respondHtml(HttpStatusCode.OK) {
             head {
                 title { +"Genereer uw mealplan" }
                 link (rel = "stylesheet", href = "/static/styles/receptenStyle.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/navBar.css", type = "text/css")
                 link (rel = "stylesheet", href = "/static/styles/mealplan.css", type = "text/css")
-                link (rel = "icon", href = "/favicon.ico", type = "image/x-icon")
+                link (rel = "icon", href = "/static/images/favicon.ico", type = "image/x-icon")
 
                 script {
                     src = "/static/scripts/change-svg-icon.js"
