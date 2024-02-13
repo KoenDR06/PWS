@@ -28,7 +28,7 @@ fun Routing.userRouting() {
             call.respond(HttpStatusCode.NoContent)
         } else {
             val token = JWT.create()
-                .withAudience(dotEnv["JWT_AUDIENCE"])
+                //.withAudience(dotEnv["JWT_AUDIENCE"])
                 .withIssuer(dotEnv["JWT_ISSUER"])
                 .withClaim("username", user.username)
                 .withExpiresAt(Date(System.currentTimeMillis() + 60 * 30 * 1000))
