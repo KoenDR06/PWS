@@ -10,7 +10,7 @@ import me.koendev.pws.plugins.recipeIngredientService
 import me.koendev.pws.plugins.recipeService
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.select
-import println
+import me.koendev.pws.println
 import java.io.File
 
 fun main() {

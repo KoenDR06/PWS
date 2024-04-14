@@ -1,6 +1,6 @@
 package me.koendev.pws.plugins
 
-import IAmATeaPot
+import me.koendev.pws.IAmATeaPot
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*

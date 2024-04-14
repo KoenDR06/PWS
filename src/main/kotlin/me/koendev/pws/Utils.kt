@@ -1,3 +1,5 @@
+package me.koendev.pws
+
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import java.io.File

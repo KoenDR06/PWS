@@ -8,7 +8,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import me.koendev.pws.dotEnv
-import println
+import me.koendev.pws.println
 
 fun Application.configureSecurity() {
     val secret = dotEnv["JWT_SECRET"]

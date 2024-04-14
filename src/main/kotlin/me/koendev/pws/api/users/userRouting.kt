@@ -1,6 +1,6 @@
 package me.koendev.pws.api.users
 
-import LikeRequest
+import me.koendev.pws.LikeRequest
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
@@ -12,12 +12,10 @@ import io.ktor.util.date.*
 import me.koendev.pws.database.User
 import me.koendev.pws.dotEnv
 import me.koendev.pws.plugins.userService
-import sha256
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 fun Routing.userRouting() {
     post("/api/users/login") {

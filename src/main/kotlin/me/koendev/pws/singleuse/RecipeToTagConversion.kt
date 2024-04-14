@@ -10,7 +10,7 @@ import me.koendev.pws.plugins.database
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import println
+import me.koendev.pws.println
 import java.io.File
 
 fun main() {
