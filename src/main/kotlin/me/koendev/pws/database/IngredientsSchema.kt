@@ -64,7 +64,7 @@ class IngredientsService(database: Database) {
             Ingredients
                 .select { Ingredients.id eq id }
                 .map { row ->
-                    IngredientItem[EntityID(id, Ingredients)] // Use the companion object's factory method
+                    IngredientItem[EntityID(id, Ingredients)]
                         .apply {
                             name = row[Ingredients.name]
                             amount = row[Ingredients.amount]

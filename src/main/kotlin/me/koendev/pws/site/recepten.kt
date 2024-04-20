@@ -40,7 +40,7 @@ fun Routing.recepten() {
                             +"Recepten"
                         }
                         div(classes = "recipes-container") {
-                            val recipeIds = List(50) { Random.nextInt(1, 5044) }
+                            val recipeIds = List(50) { Random.nextInt(1, 2) }
                             for (i in recipeIds) {
                                 recipeCard(i, userId)
                             }

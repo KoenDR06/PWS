@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Serializable
-
 data class RecipeIngredient(val recipeId: Int, val ingredientId: Int)
 class RecipeIngredientService(database: Database) {
     object RecipeIngredients : Table() {
